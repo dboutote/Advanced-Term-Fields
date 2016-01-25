@@ -33,7 +33,7 @@ add_action( 'plugins_loaded', array( 'WP_Term_Toolbox_Utils', 'compatibility_che
 
 // TESTING
 include dirname( __FILE__ ) . '/test/sample_taxonomy.php';
-include dirname( __FILE__ ) . '/functions.php';
+include dirname( __FILE__ ) . '/test/functions.php';
 
 
 /**

@@ -61,44 +61,45 @@ abstract class WP_Term_Toolbox {
 		$this->taxonomies     = $this->get_taxonomies();
 		$this->db_version_key = $this->get_db_version_key();
 		$this->set_labels();
-		#$this->register_meta();
 	}
 
-	
-	public function register_meta() 
+
+	public function register_meta()
 	{
 		register_meta(
 			'term',
 			$this->meta_key,
 			array( $this, 'sanitize_callback' ),
-			array( $this, 'auth_callback'     )
+			array( $this, 'auth_callback' )
 		);
 	}
 
-	
-	public function sanitize_callback( $data = '' ) 
+
+	public function sanitize_callback( $data = '' )
 	{
 		return $data;
 	}
 
-public function auth_callback( $allowed = false, $meta_key = '', $post_id = 0, $user_id = 0, $cap = '', $caps = array() ) 
-{
-	if ( $meta_key !== $this->meta_key ) {
+
+	public function auth_callback( $allowed = false, $meta_key = '', $post_id = 0, $user_id = 0, $cap = '', $caps = array() )
+	{
+		if ( $meta_key !== $this->meta_key ) {
+			return $allowed;
+		}
+
 		return $allowed;
 	}
-	return $allowed;
-}
-	
-	
+
+
 	public function hook_into_terms( $taxonomies = array() )
 	{
-		if ( ! empty($taxonomies) ) :
+		if ( ! empty( $taxonomies ) ) :
 			foreach ( $taxonomies as $tax_name ) {
-				add_filter( "manage_edit-{$tax_name}_columns",          array( $this, 'add_column_header' ) );
-				add_filter( "manage_{$tax_name}_custom_column",         array( $this, 'add_column_value'  ), 10, 3 );
-				add_filter( "manage_edit-{$tax_name}_sortable_columns", array( $this, 'sortable_columns'  ) );
+				add_filter( "manage_edit-{$tax_name}_columns", array( $this, 'add_column_header' ) );
+				add_filter( "manage_{$tax_name}_custom_column", array( $this, 'add_column_value' ), 10, 3 );
+				add_filter( "manage_edit-{$tax_name}_sortable_columns", array( $this, 'sortable_columns' ) );
 
-				add_action( "{$tax_name}_add_form_fields",  array( $this, 'add_form_field'  ) );
+				add_action( "{$tax_name}_add_form_fields", array( $this, 'add_form_field' ) );
 				add_action( "{$tax_name}_edit_form_fields", array( $this, 'edit_form_field' ) );
 			}
 		endif;
@@ -130,6 +131,9 @@ public function auth_callback( $allowed = false, $meta_key = '', $post_id = 0, $
 	}
 
 
+	public function format_column_output( $meta_value ){}
+
+
 	public function sortable_columns( $columns = array() )
 	{
 		$columns[$this->meta_key] = $this->meta_key;
@@ -138,7 +142,13 @@ public function auth_callback( $allowed = false, $meta_key = '', $post_id = 0, $
 	}
 
 
-	public function get_meta( $term_id = 0 ) 
+	public function add_form_field(){}
+
+
+	public function edit_form_field(){}
+
+
+	public function get_meta( $term_id = 0 )
 	{
 		return get_term_meta( $term_id, $this->meta_key, true );
 	}
@@ -163,11 +173,64 @@ public function auth_callback( $allowed = false, $meta_key = '', $post_id = 0, $
 	 */
 	public function get_custom_column_name()
 	{
-		return $this->meta_key . '-col';
+		return 'col-' . $this->meta_key;
 	}
 
 
+	public function load_admin_functions()
+	{
+		add_action( 'load-edit-tags.php', array( $this, 'load_admin_hooks'  ) );
+		add_action( 'load-edit-tags.php', array( $this, 'load_admin_scripts'  ) );
+	}
 
 
+	public function load_admin_hooks()
+	{
+		add_action( 'quick_edit_custom_box', array( $this, 'quick_edit_form_field' ), 10, 3 );
+	}
 
+
+	public function quick_edit_form_field(){}
+
+
+	public function load_admin_scripts()
+	{
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
+		add_action( 'admin_head', array( $this, 'admin_head_styles' ) );
+	}
+
+
+	public function enqueue_admin_scripts( $hook ){}
+
+
+	public function admin_head_styles(){}
+
+
+	public function process_term_meta()
+	{
+		add_action( 'create_term', array( $this, 'save_term_meta' ), 10, 2 );
+		add_action( 'edit_term',   array( $this, 'save_term_meta' ), 10, 2 );
+	}
+
+
+	public function save_term_meta( $term_id = 0, $taxonomy = '' )
+	{
+		$meta_value = ( ! empty( $_POST[$this->meta_key] ) ) ? $_POST[$this->meta_key] : '' ;
+
+		$this->set_term_meta( $term_id, $taxonomy, $meta_value );
+	}
+
+
+	public function set_term_meta( $term_id = 0, $taxonomy = '', $meta_value = '', $clean_cache = false )
+	{
+		if ( empty( $meta_value ) ) {
+			delete_term_meta( $term_id, $this->meta_key );
+		} else {
+			update_term_meta( $term_id, $this->meta_key, $meta_value );
+		}
+
+		if ( true === $clean_cache ) {
+			clean_term_cache( $term_id, $taxonomy );
+		}
+	}
 }

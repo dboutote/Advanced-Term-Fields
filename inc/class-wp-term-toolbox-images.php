@@ -34,8 +34,9 @@ final class WP_Term_Toolbox_Images extends WP_Term_Toolbox {
 	public function init()
 	{	
 		#$this->hook_into_terms($this->taxonomies);
-
-		#$this->load_edit_tags();
+		#$this->register_meta();
+		
+		#$this->load_admin_functions();
 
 		#$this->process_term_meta();
 	

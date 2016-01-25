@@ -19,9 +19,15 @@ function wp_term_term_image_get_taxonomies_args($args){
 
 
 function sanitize_term_meta_term_icon( $meta_value, $meta_key ){
-	var_dump($meta_value);
-	var_dump($meta_key);
-	wp_die(__FUNCTION__);
+	return $meta_value;
 }
 
-//add_filter( "sanitize_term_meta_term_icon", 'sanitize_term_meta_term_icon', 10,3 );
+//add_filter( "sanitize_term_meta_term_icon", 'sanitize_term_meta_term_icon', 10, 2 );
+
+
+
+function auth_term_meta_term_icon($val){
+	var_dump($val);
+	wp_die(__FUNCTION__);
+}
+//add_filter( "auth_term_meta_term_icon", 'auth_term_meta_term_icon', 10, 6 );
