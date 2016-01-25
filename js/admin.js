@@ -1,11 +1,10 @@
-( function( $ ) {
-	
+( function ($) {
     'use strict';
 
-    $( '.editinline' ).on( 'click', function() {
-        var tag_id = $( this ).parents( 'tr' ).attr( 'id' ),
-			icon  = $( 'td.icon i', '#' + tag_id ).attr( 'data-icon' );
+    $('#the-list').on('click', '.editinline', function () {
+        var tag_id = $(this).parents('tr').attr('id');
+        var meta_value = $('td.' + i10n_WPTTIcons.custom_column + ' i', '#' + tag_id).attr('data-' + i10n_WPTTIcons.data_type);
 
-        $( ':input[name="term-icon"]', '.inline-edit-row' ).val( icon );
-    } );
-} )( jQuery );
+        $(':input[name="' + i10n_WPTTIcons.meta_key + '"]', '.inline-edit-row').val(meta_value);
+    });
+})(jQuery);

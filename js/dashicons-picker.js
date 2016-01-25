@@ -4,7 +4,11 @@
  * Based on: https://github.com/bradvin/dashicons-picker/
  */
 
-( function ( $ ) {
+( function ($) {
+
+	'use strict';
+
+	/*jshint multistr: true */
 
 	/**
 	 *
@@ -266,28 +270,25 @@
 				offsetTop,
 				offsetLeft;
 
-			button.on( 'click.dashiconsPicker', function (e) {	
+			button.on( 'click.dashiconsPicker', function (e) {
 				offsetTop = $(e.currentTarget).offset().top;
-				offsetLeft = $(e.currentTarget).offset().left;			
+				offsetLeft = $(e.currentTarget).offset().left;
 				createPopup( button );
 			} );
 
 			function createPopup( button ) {
 
 				var target = $( button.data( 'target' ) ),
-					popup  = $( '<div class="dashicon-picker-container"> \
-						<div class="dashicon-picker-control" /> \
-						<ul class="dashicon-picker-list" /> \
-					</div>' )
+					popup  = $( '<div class="dashicon-picker-container"> <div class="dashicon-picker-control" /> <ul class="dashicon-picker-list" /> </div>' )
 						.css( {
 							'top':  offsetTop,
 							'left': offsetLeft
 						} ),
 					list = popup.find( '.dashicon-picker-list' );
 
-				for ( var i in icons ) {
+				for ( var i = 0; i < icons.length; i++){
 					list.append( '<li data-icon="' + icons[i] + '"><a href="#" title="' + icons[i] + '"><span class="dashicons dashicons-' + icons[i] + '"></span></a></li>' );
-				};
+				}
 
 				$( 'a', list ).click( function ( e ) {
 					e.preventDefault();
@@ -298,10 +299,7 @@
 
 				var control = popup.find( '.dashicon-picker-control' );
 
-				control.html( '<a data-direction="back" href="#"> \
-					<span class="dashicons dashicons-arrow-left-alt2"></span></a> \
-					<input type="text" class="" placeholder="Search" /> \
-					<a data-direction="forward" href="#"><span class="dashicons dashicons-arrow-right-alt2"></span></a>'
+				control.html( '<a data-direction="back" href="#"> <span class="dashicons dashicons-arrow-left-alt2"></span></a> <input type="text" class="" placeholder="Search" /> <a data-direction="forward" href="#"><span class="dashicons dashicons-arrow-right-alt2"></span></a>'
 				);
 
 				$( 'a', control ).click( function ( e ) {

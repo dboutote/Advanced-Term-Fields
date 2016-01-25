@@ -69,26 +69,27 @@ class WP_Term_Toolbox_Utils {
 
 		return false;
 	}
-	
-	
+
+
 	/**
 	 * Return the taxonomies used by this plugin
 	 *
 	 * @since 0.1.0
 	 *
 	 * @param array $args
+	 * @param $meta_key The meta key for the meta function making the request
+	 * 
 	 * @return array
 	 */
-	static function get_taxonomies( $args = array() ) {
+	static function get_taxonomies( $args = array() , $meta_key = '' ) {
 
-		// Parse arguments
-		$r = wp_parse_args( $args, array(
-			'show_ui' => true
-		) );
-		
+		$defaults = apply_filters( "wp_term_toolbox_get_taxonomies_args", array( 'show_ui' => true ) );
+		$defaults = apply_filters( "wp_term_toolbox_{$meta_key}_get_taxonomies_args", $defaults );
+
+		$r = wp_parse_args( $args, $defaults );
+
 		$taxonomies = get_taxonomies( $r );
 
-		// allow other plugins to filter the returned taxonomies
 		return apply_filters('wp_term_toolbox_taxonomies', $taxonomies);
 	}
 
