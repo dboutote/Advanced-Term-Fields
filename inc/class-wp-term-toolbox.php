@@ -1,5 +1,23 @@
 <?php
 
+/**
+ * Term Toolbox Class
+ *
+ * This class establishes the base functionality for adding custom meta fields to taxonomy terms.
+ * Provides methods for the following:
+ * - Adding columns to list tables
+ * - Adding fields to add/edit/quick-edit forms
+ * - Sanitizing meta values
+ *
+ * Can be extended by other plugins or functions either through child classes or the provided
+ * filters/action hooks.
+ *
+ * @since 0.1.0
+ *
+ * @version 0.1.0
+ *
+ */
+
 // No direct access
 if ( ! function_exists( 'add_filter' ) ) {
 	header( 'Status: 403 Forbidden' );
@@ -8,18 +26,17 @@ if ( ! function_exists( 'add_filter' ) ) {
 }
 
 /**
- * WP Term Toolbox Main Class
+ * Main WP Term Toolbox Class
  *
  * @version 1.0.0
  *
  * @since 0.1.0
  */
-
 abstract class WP_Term_Toolbox {
 
 	protected $version = '0.0.0';
 
-	protected $db_version = 201601010001;
+	protected $db_version = '2015.20.2020';
 
 	protected $db_version_key = '';
 
@@ -27,7 +44,7 @@ abstract class WP_Term_Toolbox {
 
 	protected $no_meta_value = '&#8212;';
 
-	protected $custom_column = '';
+	protected $custom_column_name = '';
 
 	protected $data_type = '';
 
@@ -47,8 +64,20 @@ abstract class WP_Term_Toolbox {
 		'description' => ''
 	);
 
+	protected $show_custom_column = true;
 
-	abstract function set_labels();
+	protected $show_fields = true;
+
+	private $required_props = array(
+		'meta_key',
+		'data_type',
+		'labels',
+		);
+
+
+	abstract protected function set_labels();
+	#abstract protected function set_meta_key();
+	#abstract protected function set_data_type();
 
 
 	public function __construct( $file = '' )
@@ -57,11 +86,43 @@ abstract class WP_Term_Toolbox {
 		$this->url            = plugin_dir_url( $this->file );
 		$this->path           = plugin_dir_path( $this->file );
 		$this->basename       = plugin_basename( $this->file );
-		$this->custom_column  = $this->get_custom_column_name();
-		$this->taxonomies     = $this->get_taxonomies();
-		$this->db_version_key = $this->get_db_version_key();
+
 		$this->set_labels();
+
+		$this->custom_column_name  = $this->get_custom_column_name();
+		$this->taxonomies          = $this->get_taxonomies();
+		$this->db_version_key      = $this->get_db_version_key();
+
+		$this->check_required_props();
 	}
+
+
+	private function check_required_props()
+	{
+		foreach ( $this->required_props  as $prop ) {
+			$this->check_required( $prop );
+		}
+
+	}
+
+	private function check_required( $prop )
+	{
+		// clean arrays, check for empty values
+		if ( is_array( $this->$prop ) ) {
+			$this->$prop = array_filter( $this->$prop );
+		};
+
+		if( empty( $this->$prop ) ){
+
+			$output = sprintf(
+				'No value set for %1$s::$%2$s',
+				get_class($this),
+				$prop
+				);
+			throw new Exception( $output );
+		}
+	}
+
 
 
 	public function register_meta()
@@ -91,24 +152,44 @@ abstract class WP_Term_Toolbox {
 	}
 
 
-	public function hook_into_terms( $taxonomies = array() )
+	public function show_custom_column( $taxonomies = array() )
 	{
+		if( ! $this->show_custom_column ) {
+			return;
+		}
+
 		if ( ! empty( $taxonomies ) ) :
 			foreach ( $taxonomies as $tax_name ) {
 				add_filter( "manage_edit-{$tax_name}_columns", array( $this, 'add_column_header' ) );
 				add_filter( "manage_{$tax_name}_custom_column", array( $this, 'add_column_value' ), 10, 3 );
 				add_filter( "manage_edit-{$tax_name}_sortable_columns", array( $this, 'sortable_columns' ) );
+			}
+		endif;
 
+		return $taxonomies;
+	}
+
+
+	public function show_custom_fields( $taxonomies = array() )
+	{
+		if( ! $this->show_fields ) {
+			return;
+		}
+
+		if ( ! empty( $taxonomies ) ) :
+			foreach ( $taxonomies as $tax_name ) {
 				add_action( "{$tax_name}_add_form_fields", array( $this, 'add_form_field' ) );
 				add_action( "{$tax_name}_edit_form_fields", array( $this, 'edit_form_field' ) );
 			}
 		endif;
+
+		return $taxonomies;
 	}
 
 
 	public function add_column_header( $columns = array() )
 	{
-		$columns[$this->custom_column] = $this->labels['singular'];
+		$columns[$this->custom_column_name] = $this->labels['singular'];
 
 		return $columns;
 	}
@@ -116,7 +197,7 @@ abstract class WP_Term_Toolbox {
 
 	public function add_column_value( $empty = '', $custom_column = '', $term_id = 0 )
 	{
-		if ( empty( $_REQUEST['taxonomy'] ) || ( $this->custom_column !== $custom_column ) || ! empty( $empty ) ) {
+		if ( empty( $_REQUEST['taxonomy'] ) || ( $this->custom_column_name !== $custom_column ) || ! empty( $empty ) ) {
 			return;
 		}
 
@@ -136,7 +217,7 @@ abstract class WP_Term_Toolbox {
 
 	public function sortable_columns( $columns = array() )
 	{
-		$columns[$this->meta_key] = $this->meta_key;
+		$columns[$this->custom_column_name] = $this->meta_key;
 
 		return $columns;
 	}
@@ -179,8 +260,28 @@ abstract class WP_Term_Toolbox {
 
 	public function load_admin_functions()
 	{
+		add_action( 'admin_init', array( $this, 'upgrade_check' ) );
 		add_action( 'load-edit-tags.php', array( $this, 'load_admin_hooks'  ) );
 		add_action( 'load-edit-tags.php', array( $this, 'load_admin_scripts'  ) );
+	}
+
+
+	public function maybe_upgrade_database() {
+		$stored_version = get_option( $this->db_version_key );
+
+		if ( version_compare( $stored_version, $this->db_version, '<' ) ) {
+			$this->upgrade_database( $stored_version, $this->db_version );
+		}
+	}
+
+
+	public function upgrade_database( $stored_version = 0, $db_version  ) {
+		update_option( $this->db_version_key, $this->db_version );
+	}
+
+
+	public function upgrade_check() {
+		$this->maybe_upgrade_database();
 	}
 
 

@@ -1,6 +1,6 @@
 <style type="text/css">
-	.column-<?php echo $this->custom_column; ?> {
-		width: 40px;
+	.column-<?php echo $this->custom_column_name; ?> {
+		width: 65px;
 	}
 	.term-<?php echo $this->data_type; ?> {
 		-webkit-font-smoothing: antialiased;
@@ -17,20 +17,19 @@
 	
 	.icon-meta-wrap {
 		position: relative;
-		overflow: auto;
 	}
 	
 	.icon-img {
 		background: #fff none repeat scroll 0 0;
 		border: 1px solid #ddd;
+		cursor: pointer;
 		display: inline-block;
-		float: left;
 		height: 57px;
 		margin-left: 1px;
-		margin-right: 10px;
 		padding: 10px;
 		text-align: center;
 		width: 57px;
+		
 	}
 	
 	.icon-img .term-icon {
@@ -40,9 +39,7 @@
 		margin: 0;
 		width: 48px;
 	}
-	.icon-utils {
-		display: inline-block;
-	}
+	.icon-utils {}
 	
 	.icon-meta-wrap .description {
 		clear: both;

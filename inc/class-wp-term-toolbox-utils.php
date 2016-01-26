@@ -42,7 +42,7 @@ class WP_Term_Toolbox_Utils {
 
 
 	static function _plugin_deactivate() {
-		deactivate_plugins( plugin_basename( WPTT_FILE ) );
+		deactivate_plugins( plugin_basename( WP_TT_FILE ) );
 	}
 
 

@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Term Featured Image Class
+ *
+ * @version 0.1.0
+ *
+ * @since 0.1.0
+ *
+ */
+
 // No direct access
 if ( ! function_exists( 'add_filter' ) ) {
 	header( 'Status: 403 Forbidden' );
@@ -12,36 +21,40 @@ if ( ! function_exists( 'add_filter' ) ) {
  * Adds featured images for taxonomy terms
  *
  * @version 1.0.0
- * 
+ *
  * @since 0.1.0
  *
  */
 final class WP_Term_Toolbox_Images extends WP_Term_Toolbox {
 
 	public $version = '0.1.0';
-	
+
+	public $db_version = '2016.25.1943';
+
 	public $meta_key = 'thumbnail_id';
-	
+
 	public $data_type = 'featimage';
 
-	public $db_version = 201601010001;
-	
+
 	public function __construct( $file = '' )
 	{
 		parent::__construct( $file );
 	}
-	
-	public function init()
-	{	
-		#$this->hook_into_terms($this->taxonomies);
-		#$this->register_meta();
-		
-		#$this->load_admin_functions();
 
-		#$this->process_term_meta();
-	
+
+	public function init()
+	{
+		$this->show_custom_column( $this->taxonomies );
+		$this->show_custom_fields( $this->taxonomies );
+		$this->register_meta();
+		$this->load_admin_functions();
+		$this->process_term_meta();
 	}
-	
+
+
+	/**
+	 * Keep here
+	 */
 	public function set_labels()
 	{
 		$this->labels = array(
@@ -50,5 +63,53 @@ final class WP_Term_Toolbox_Images extends WP_Term_Toolbox {
 			'description' => esc_html__( 'Set featured image.', 'wp-term-toolbox' )
 		);
 	}
-	
+
+
+	/**
+	 * Keep here
+	 */
+	public function format_column_output($meta_value)
+	{
+		$output = sprintf(
+			'<i data-%1$s="%2$s" class="term-%1$s dashicons %2$s"></i>',
+			$this->data_type,
+			esc_attr( $meta_value )
+			);
+
+		return $output;
+	}
+
+
+	/**
+	 * Keep here
+	 */
+	public function enqueue_admin_scripts( $hook )
+	{
+
+		wp_enqueue_script( 'wp-tt-images', $this->url . 'js/feat-images.js', array( 'jquery' ), '', true );
+
+		wp_localize_script( 'wp-tt-images', 'i10n_WPTTImages', array(
+			'custom_column_name' => esc_html__( $this->custom_column_name ),
+			'meta_key'      => esc_html__( $this->meta_key ),
+			'data_type'     => esc_html__( $this->data_type ),
+		) );
+
+	}
+
+
+	/**
+	 * Keep here
+	 */
+	public function admin_head_styles()
+	{
+		ob_start();
+		include dirname( $this->file ) . '/css/admin-head-feat-image.php';
+		$css = ob_get_contents();
+		ob_end_clean();
+
+		echo $css;
+	}
+
+
+
 }

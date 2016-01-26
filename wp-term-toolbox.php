@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: WP Term Toolbox
- * Plugin URI:  
+ * Plugin URI:  https://darrinb.com/plugins/wp-term-toolbox
  * Author:      darrinb
  * Author URI:  https://profiles.wordpress.org/dbmartin/
  * Version:     0.1.0
@@ -9,6 +9,13 @@
  * License:     GPL v2 or later
  */
  
+/**
+ * Based on the WP Term Icons Plugin (https://wordpress.org/plugins/wp-term-icons/) 
+ * by John James Jacoby (https://profiles.wordpress.org/johnjamesjacoby/)
+ *
+ */
+ 
+
 // No direct access
 if ( ! function_exists( 'add_filter' ) ) {
 	header( 'Status: 403 Forbidden' );
@@ -17,8 +24,8 @@ if ( ! function_exists( 'add_filter' ) ) {
 }
  
 
-if ( ! defined( 'WPTT_FILE' ) ) {
-	define( 'WPTT_FILE', __FILE__ );
+if ( ! defined( 'WP_TT_FILE' ) ) {
+	define( 'WP_TT_FILE', __FILE__ );
 }
 
 
