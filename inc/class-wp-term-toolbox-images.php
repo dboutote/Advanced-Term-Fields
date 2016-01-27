@@ -49,6 +49,7 @@ final class WP_Term_Toolbox_Images extends WP_Term_Toolbox {
 		$this->register_meta();
 		$this->load_admin_functions();
 		$this->process_term_meta();
+		$this->filter_terms_query();
 	}
 
 
@@ -86,6 +87,7 @@ final class WP_Term_Toolbox_Images extends WP_Term_Toolbox {
 	public function enqueue_admin_scripts( $hook )
 	{
 
+
 		wp_enqueue_script( 'wp-tt-images', $this->url . 'js/feat-images.js', array( 'jquery' ), '', true );
 
 		wp_localize_script( 'wp-tt-images', 'i10n_WPTTImages', array(
@@ -109,6 +111,7 @@ final class WP_Term_Toolbox_Images extends WP_Term_Toolbox {
 
 		echo $css;
 	}
+
 
 
 

@@ -5,7 +5,7 @@
  * Author:      darrinb
  * Author URI:  https://profiles.wordpress.org/dbmartin/
  * Version:     0.1.0
- * Description: Easily manage all your term meta fields for categories, tags, and custom taxonomies
+ * Description: Easily manage all your term meta fields for categories, tags, and custom taxonomies.
  * License:     GPL v2 or later
  */
  

@@ -49,8 +49,9 @@ class WP_Term_Toolbox_Icons extends WP_Term_Toolbox {
 		$this->register_meta();
 		$this->load_admin_functions();
 		$this->process_term_meta();
+		$this->filter_terms_query();
 	}
-
+	
 
 	/**
 	 * Keep here

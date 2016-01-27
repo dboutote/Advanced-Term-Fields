@@ -74,6 +74,17 @@ abstract class WP_Term_Toolbox {
 		'labels',
 		);
 
+	/**
+	 * Used for filtering queries
+	 *
+	 * @var string $meta_type Custom field type. Can be any value accepted by WP_Meta_Query 
+	 *
+	 * @see WP_Meta_Query wp-includes/class-wp-meta-query.php
+	 */
+	protected $meta_type = '';
+
+	protected $allowed_orderby_keys = array();
+
 
 	abstract protected function set_labels();
 	#abstract protected function set_meta_key();
@@ -81,19 +92,34 @@ abstract class WP_Term_Toolbox {
 
 
 	public function __construct( $file = '' )
-	{
+	{		
+		
 		$this->file           = $file;
 		$this->url            = plugin_dir_url( $this->file );
 		$this->path           = plugin_dir_path( $this->file );
 		$this->basename       = plugin_basename( $this->file );
 
 		$this->set_labels();
-
-		$this->custom_column_name  = $this->get_custom_column_name();
-		$this->taxonomies          = $this->get_taxonomies();
-		$this->db_version_key      = $this->get_db_version_key();
-
+		
+		$this->allowed_orderby_keys = $this->get_allowed_orderby_keys();
+		$this->custom_column_name   = $this->get_custom_column_name();
+		$this->taxonomies           = $this->get_taxonomies();
+		$this->db_version_key       = $this->get_db_version_key();
+		
+		// check to make sure everything is set
 		$this->check_required_props();
+		
+	}
+
+
+	public function get_allowed_orderby_keys()
+	{
+		$keys = array(
+			$this->meta_key,
+			'meta_value',
+			'meta_value_num'
+			);
+		return apply_filters ( 'wp_tt_allowed_orderby_keys', $keys, $this->meta_key );
 	}
 
 
@@ -334,4 +360,129 @@ abstract class WP_Term_Toolbox {
 			clean_term_cache( $term_id, $taxonomy );
 		}
 	}
+
+
+	public function filter_terms_query()
+	{
+		add_filter( 'terms_clauses', array($this, 'filter_terms_clauses'), 10, 3 );
+		add_filter( 'get_terms_args', array($this, 'filter_terms_table_args'), 10, 2 );
+	}
+
+
+
+	/**
+	 * Filter the terms query SQL clauses.
+	 *
+	 * @see 'terms_clauses' filter in get_terms() wp-includes/taxonomy.php
+	 *
+	 * @since 0.1.0
+	 *
+	 * @todo add filter for $allowed_orderby_keys
+	 *
+	 * @param array $pieces     Terms query SQL clauses.
+	 * @param array $taxonomies An array of taxonomies.
+	 * @param array $args       An array of terms query arguments.
+	 *
+	 * @return array $pieces The filtered SQL clauses
+	 */
+	public function filter_terms_clauses( $pieces = array(), $taxonomies = array(), $args = array() )
+	{
+		global $wpdb;
+
+		// Bail if the meta_key in the args doesn't match the meta key for this term meta
+		if( isset( $args['meta_key'] ) && ! empty( $args['meta_key'] ) ) {
+			if( $this->meta_key !== $args['meta_key'] ) {
+				return $pieces;
+			}
+		}
+
+		 // If we're not ordering by any of the allowed keys, return		 
+		$orderby = ( ! empty( $args['orderby'] ) ) ? $args['orderby'] : '' ;
+		if ( ! in_array( $orderby, $this->allowed_orderby_keys, true ) ) {
+			return $pieces ;
+		}
+
+		// Bail if there's no meta query
+		if( empty( $args['meta_query'] ) ) {
+			return $pieces ;
+		}
+		
+		/**
+		 * Someone could set meta_type in get_terms() at a later point if Core adopts meta querying 
+		 * for terms like post types.
+		 */
+		$meta_type = (  isset( $args['meta_type'] ) && ! empty( $args['meta_type'] )  ) ? esc_sql( $args['meta_type'] ) : $this->meta_type;
+	
+		switch ( $args[ 'orderby' ] ) {
+			case $this->meta_key :
+			case 'meta_value' :
+				if ( ! empty( $meta_type ) ) {
+					$pieces ['orderby'] = "ORDER BY CAST({$wpdb->termmeta}.meta_value AS {$meta_type})";
+				} else {
+					$pieces ['orderby'] = "ORDER BY {$wpdb->termmeta}.meta_value";
+				}
+				break;
+			case 'meta_value_num':
+				$pieces ['orderby'] = "ORDER BY {$wpdb->termmeta}.meta_value+0";
+				break;
+		}
+
+		return $pieces ;
+	}
+
+
+
+	/**
+	 * Filter terms listing in WP_Terms_List_Table table on edit-tags.php
+	 *
+	 * Adds the meta_query argument which tells WP to fire a new WP_Meta_Query() instance.
+	 * This handles all the custom SQL queries needed to sort by meta value.
+	 *
+	 * We have to specifically call for terms that have the meta key set and those that don't, or 
+	 * else WP will only return terms with the meta_key.
+	 *
+	 * Note: WP_Terms_List_Table checks $_REQUEST['orderby'] and sets $args['orderby'] when
+	 * displaying terms in wp-admin/edit-tags.php.
+	 *
+	 * @see 'get_terms_args' filter in get_terms() wp-includes/taxonomy.php
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param array  $args       An array of terms query arguments.
+	 * @param array  $taxonomies An array of taxonomies.
+	 *
+	 * @return array $args The filtered terms query arguments.
+	 */
+	function filter_terms_table_args( $args, $taxonomies )
+	{
+		global $pagenow;
+
+		if( ! is_admin() || 'edit-tags.php' !== $pagenow ){
+			return $args;
+		}
+
+		 // If we're not ordering by any of the allowed keys, return		 
+		$orderby = ( ! empty( $args['orderby'] ) ) ? $args['orderby'] : '' ;
+		if ( ! in_array( $orderby, $this->allowed_orderby_keys, true ) ) {
+			return $args ;
+		}
+
+		// Set the meta query args
+		$args['meta_key'] = $this->meta_key;
+		$args['meta_query'] = array(
+			'relation' => 'OR',
+			array(
+				'key'=>$this->meta_key,
+				'compare' => 'EXISTS'
+			),
+			array(
+				'key'=>$this->meta_key,
+				'compare' => 'NOT EXISTS'
+			)
+		);
+
+		return $args;
+	}
+
+
 }
