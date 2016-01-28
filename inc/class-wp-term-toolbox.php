@@ -36,7 +36,7 @@ abstract class WP_Term_Toolbox {
 
 	protected $version = '0.0.0';
 
-	protected $db_version = '2015.20.2020';
+	protected $db_version = '2015.12.20.2020';
 
 	protected $db_version_key = '';
 
@@ -131,15 +131,17 @@ abstract class WP_Term_Toolbox {
 
 	}
 
+	
 	private function check_required( $prop )
 	{
 		// clean arrays, check for empty values
 		if ( is_array( $this->$prop ) ) {
-			$this->$prop = array_filter( $this->$prop );
+			$cleaned_prop = array_filter( $this->$prop );
+		} else {
+			$cleaned_prop = trim( $this->$prop );
 		};
 
-		if( empty( $this->$prop ) ){
-
+		if( empty( $cleaned_prop ) ){
 			$output = sprintf(
 				'No value set for %1$s::$%2$s',
 				get_class($this),
@@ -148,7 +150,6 @@ abstract class WP_Term_Toolbox {
 			throw new Exception( $output );
 		}
 	}
-
 
 
 	public function register_meta()
@@ -231,14 +232,14 @@ abstract class WP_Term_Toolbox {
 		$meta_value = $this->get_meta( $term_id );
 
 		if ( ! empty( $meta_value ) ) {
-			$return_value = $this->format_column_output( $meta_value );
+			$return_value = $this->custom_column_output( $meta_value );
 		}
 
 		echo $return_value;
 	}
 
 
-	public function format_column_output( $meta_value ){}
+	public function custom_column_output( $meta_value ){}
 
 
 	public function sortable_columns( $columns = array() )
@@ -292,7 +293,8 @@ abstract class WP_Term_Toolbox {
 	}
 
 
-	public function maybe_upgrade_database() {
+	public function maybe_upgrade_database() 
+	{
 		$stored_version = get_option( $this->db_version_key );
 
 		if ( version_compare( $stored_version, $this->db_version, '<' ) ) {
@@ -301,12 +303,14 @@ abstract class WP_Term_Toolbox {
 	}
 
 
-	public function upgrade_database( $stored_version = 0, $db_version  ) {
+	public function upgrade_database( $stored_version = 0, $db_version  ) 
+	{
 		update_option( $this->db_version_key, $this->db_version );
 	}
 
 
-	public function upgrade_check() {
+	public function upgrade_check() 
+	{
 		$this->maybe_upgrade_database();
 	}
 
@@ -342,6 +346,10 @@ abstract class WP_Term_Toolbox {
 
 	public function save_term_meta( $term_id = 0, $taxonomy = '' )
 	{
+		if ( ! isset( $_POST["{$this->meta_key}_nonce"] ) || ! wp_verify_nonce( $_POST["{$this->meta_key}_nonce"], $this->basename ) ) {
+			return;
+		}
+		
 		$meta_value = ( ! empty( $_POST[$this->meta_key] ) ) ? $_POST[$this->meta_key] : '' ;
 
 		$this->set_term_meta( $term_id, $taxonomy, $meta_value );

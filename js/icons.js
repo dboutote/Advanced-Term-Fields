@@ -2,8 +2,8 @@
     'use strict';
 
     $('#the-list').on('click', '.editinline', function () {
-        var tag_id = $(this).parents('tr').attr('id');
-        var meta_value = $('td.' + i10n_WPTTIcons.custom_column_name + ' i', '#' + tag_id).attr('data-' + i10n_WPTTIcons.data_type);
+        var tr_id = $(this).parents('tr').attr('id');
+        var meta_value = $('td.' + i10n_WPTTIcons.custom_column_name + ' i', '#' + tr_id).attr('data-' + i10n_WPTTIcons.data_type);
 
         $(':input[name="' + i10n_WPTTIcons.meta_key + '"]', '.inline-edit-row').val(meta_value);
     });

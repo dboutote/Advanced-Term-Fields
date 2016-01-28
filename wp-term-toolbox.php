@@ -31,6 +31,8 @@ if ( ! defined( 'WP_TT_FILE' ) ) {
 
 /**
  * Check if we can load/activate
+ * 
+ * @since 0.1.0
  */
 include dirname( __FILE__ ) . '/inc/class-wp-term-toolbox-utils.php';
 add_action( 'plugins_loaded', array( 'WP_Term_Toolbox_Utils', 'compatibility_check' ) );
@@ -58,7 +60,6 @@ include dirname( __FILE__ ) . '/inc/class-wp-term-toolbox.php';
  */
 function _wp_tt_icons_init(){
 	include dirname( __FILE__ ) . '/inc/class-wp-term-toolbox-icons.php';
-
 	$WP_Term_Toolbox_Icons = new WP_Term_Toolbox_Icons( __FILE__ );
 	$WP_Term_Toolbox_Icons->init();
 }
@@ -72,7 +73,6 @@ add_action( 'init', '_wp_tt_icons_init', 99 );
  */
 function _wp_tt_images_init(){
 	include dirname( __FILE__ ) . '/inc/class-wp-term-toolbox-images.php';
-
 	$WP_Term_Toolbox_Images = new WP_Term_Toolbox_Images( __FILE__ );
 	$WP_Term_Toolbox_Images->init();
 }

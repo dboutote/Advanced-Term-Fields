@@ -69,25 +69,8 @@ final class WP_Term_Toolbox_Images extends WP_Term_Toolbox {
 	/**
 	 * Keep here
 	 */
-	public function format_column_output($meta_value)
-	{
-		$output = sprintf(
-			'<i data-%1$s="%2$s" class="term-%1$s dashicons %2$s"></i>',
-			$this->data_type,
-			esc_attr( $meta_value )
-			);
-
-		return $output;
-	}
-
-
-	/**
-	 * Keep here
-	 */
 	public function enqueue_admin_scripts( $hook )
 	{
-
-
 		wp_enqueue_script( 'wp-tt-images', $this->url . 'js/feat-images.js', array( 'jquery' ), '', true );
 
 		wp_localize_script( 'wp-tt-images', 'i10n_WPTTImages', array(
@@ -95,7 +78,6 @@ final class WP_Term_Toolbox_Images extends WP_Term_Toolbox {
 			'meta_key'      => esc_html__( $this->meta_key ),
 			'data_type'     => esc_html__( $this->data_type ),
 		) );
-
 	}
 
 
@@ -112,7 +94,64 @@ final class WP_Term_Toolbox_Images extends WP_Term_Toolbox {
 		echo $css;
 	}
 
+	
+	/**
+	 * Keep here
+	 */
+	public function custom_column_output($meta_value)
+	{
+		$output = sprintf(
+			'<i data-%1$s="%2$s" class="term-%1$s dashicons %2$s"></i>',
+			$this->data_type,
+			esc_attr( $meta_value )
+			);
+
+		return $output;
+	}
 
 
+	/**
+	 * Keep here
+	 */
+	public function add_form_field()
+	{
+		ob_start();
+		wp_nonce_field( $this->basename , "{$this->meta_key}_nonce");
+		include dirname( $this->file ) . '/views/add-form-field-images.php';
+		$field = ob_get_contents();
+		ob_end_clean();
+
+		echo $field;
+	}
+
+
+	/**
+	 * Keep here
+	 */
+	public function edit_form_field( $term = false )
+	{
+		ob_start();
+		wp_nonce_field( $this->basename , "{$this->meta_key}_nonce");
+		include dirname( $this->file ) . '/views/edit-form-field-images.php';
+		$field = ob_get_contents();
+		ob_end_clean();
+
+		echo $field;
+	}
+
+
+	/**
+	 * Keep here
+	 */
+	public function quick_edit_form_field( $column_name = '', $screen = '', $name = '' )
+	{
+		ob_start();
+		wp_nonce_field( $this->basename , "{$this->meta_key}_nonce");
+		include dirname( $this->file ) . '/views/quick-form-field-images.php';
+		$field = ob_get_contents();
+		ob_end_clean();
+
+		echo $field;
+	}
 
 }

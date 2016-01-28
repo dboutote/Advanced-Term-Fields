@@ -25,11 +25,11 @@ if ( ! function_exists( 'add_filter' ) ) {
  * @since 0.1.0
  *
  */
-class WP_Term_Toolbox_Icons extends WP_Term_Toolbox {
+final class WP_Term_Toolbox_Icons extends WP_Term_Toolbox {
 
 	public $version = '0.1.0';
 
-	public $db_version = '2015.24.1315';
+	public $db_version = '2015.12.24.1315';
 
 	public $meta_key = 'term_icon';
 
@@ -51,7 +51,7 @@ class WP_Term_Toolbox_Icons extends WP_Term_Toolbox {
 		$this->process_term_meta();
 		$this->filter_terms_query();
 	}
-	
+
 
 	/**
 	 * Keep here
@@ -63,21 +63,6 @@ class WP_Term_Toolbox_Icons extends WP_Term_Toolbox {
 			'plural'      => esc_html__( 'Icons', 'wp-term-toolbox' ),
 			'description' => esc_html__( 'Select an icon to represent this term.', 'wp-term-toolbox' )
 		);
-	}
-
-
-	/**
-	 * Keep here
-	 */
-	public function format_column_output($meta_value)
-	{
-		$output = sprintf(
-			'<i data-%1$s="%2$s" class="term-%1$s dashicons %2$s"></i>',
-			$this->data_type,
-			esc_attr( $meta_value )
-			);
-
-		return $output;
 	}
 
 
@@ -96,7 +81,6 @@ class WP_Term_Toolbox_Icons extends WP_Term_Toolbox {
 			'meta_key'      => esc_html__( $this->meta_key ),
 			'data_type'     => esc_html__( $this->data_type ),
 		) );
-
 	}
 
 
@@ -106,7 +90,7 @@ class WP_Term_Toolbox_Icons extends WP_Term_Toolbox {
 	public function admin_head_styles()
 	{
 		ob_start();
-		include dirname( $this->file ) . '/css/admin-head-icon.php';
+		include dirname( $this->file ) . "/css/admin-head-icon.php";
 		$css = ob_get_contents();
 		ob_end_clean();
 
@@ -117,9 +101,25 @@ class WP_Term_Toolbox_Icons extends WP_Term_Toolbox {
 	/**
 	 * Keep here
 	 */
+	public function custom_column_output($meta_value)
+	{
+		$output = sprintf(
+			'<i data-%1$s="%2$s" class="term-%1$s dashicons %2$s"></i>',
+			$this->data_type,
+			esc_attr( $meta_value )
+			);
+
+		return $output;
+	}
+
+
+	/**
+	 * Keep here
+	 */
 	public function add_form_field()
 	{
 		ob_start();
+		wp_nonce_field( $this->basename , "{$this->meta_key}_nonce");
 		include dirname( $this->file ) . '/views/add-form-field-icons.php';
 		$field = ob_get_contents();
 		ob_end_clean();
@@ -134,6 +134,7 @@ class WP_Term_Toolbox_Icons extends WP_Term_Toolbox {
 	public function edit_form_field( $term = false )
 	{
 		ob_start();
+		wp_nonce_field( $this->basename , "{$this->meta_key}_nonce");
 		include dirname( $this->file ) . '/views/edit-form-field-icons.php';
 		$field = ob_get_contents();
 		ob_end_clean();
@@ -148,6 +149,7 @@ class WP_Term_Toolbox_Icons extends WP_Term_Toolbox {
 	public function quick_edit_form_field( $column_name = '', $screen = '', $name = '' )
 	{
 		ob_start();
+		wp_nonce_field( $this->basename , "{$this->meta_key}_nonce");
 		include dirname( $this->file ) . '/views/quick-form-field-icons.php';
 		$field = ob_get_contents();
 		ob_end_clean();
