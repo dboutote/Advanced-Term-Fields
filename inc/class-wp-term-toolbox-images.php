@@ -29,11 +29,9 @@ final class WP_Term_Toolbox_Images extends WP_Term_Toolbox {
 
 	public $version = '0.1.0';
 
-	public $db_version = '2016.25.1943';
-
 	public $meta_key = 'thumbnail_id';
 
-	public $data_type = 'featimage';
+	public $data_type = 'thumbnail';
 
 
 	public function __construct( $file = '' )
@@ -59,9 +57,9 @@ final class WP_Term_Toolbox_Images extends WP_Term_Toolbox {
 	public function set_labels()
 	{
 		$this->labels = array(
-			'singular'    => esc_html__( 'Featured Image',  'wp-term-toolbox' ),
-			'plural'      => esc_html__( 'Featured Images', 'wp-term-toolbox' ),
-			'description' => esc_html__( 'Set featured image.', 'wp-term-toolbox' )
+			'singular'    => esc_html__( 'Image',  'wp-term-toolbox' ),
+			'plural'      => esc_html__( 'Images', 'wp-term-toolbox' ),
+			'description' => esc_html__( 'Set a featured image for this term.', 'wp-term-toolbox' )
 		);
 	}
 
@@ -71,12 +69,27 @@ final class WP_Term_Toolbox_Images extends WP_Term_Toolbox {
 	 */
 	public function enqueue_admin_scripts( $hook )
 	{
+	
+		// Enqueue media
+		wp_enqueue_media();
+		
 		wp_enqueue_script( 'wp-tt-images', $this->url . 'js/feat-images.js', array( 'jquery' ), '', true );
+		
+		// Term ID
+		$term_id = ! empty( $_GET['tag_ID'] )
+			? (int) $_GET['tag_ID']
+			: 0;		
 
 		wp_localize_script( 'wp-tt-images', 'i10n_WPTTImages', array(
 			'custom_column_name' => esc_html__( $this->custom_column_name ),
 			'meta_key'      => esc_html__( $this->meta_key ),
 			'data_type'     => esc_html__( $this->data_type ),
+			'insertMediaTitle' => esc_html__( 'Choose an Image', 'wp-term-toolbox' ),
+			'insertIntoPost'   => esc_html__( 'Set featured image', 'wp-term-toolbox' ),
+			'removeFromPost'   => esc_html__( 'Set featured image', 'wp-term-toolbox' ),
+			'term_id'          => $term_id,
+			
+			
 		) );
 	}
 
@@ -100,11 +113,23 @@ final class WP_Term_Toolbox_Images extends WP_Term_Toolbox {
 	 */
 	public function custom_column_output($meta_value)
 	{
-		$output = sprintf(
-			'<i data-%1$s="%2$s" class="term-%1$s dashicons %2$s"></i>',
-			$this->data_type,
-			esc_attr( $meta_value )
-			);
+		$output = '';
+			
+		$image_attributes = wp_get_attachment_image_src( $meta_value );
+		
+		if( $image_attributes ) : 
+		
+			$output = sprintf(
+				'<img data-%1$s="%2$s" data-id="%2$s" class="term-%1$s" src="%3$s" width="%4$s" height="%5$s" />',
+				$this->data_type,
+				esc_attr( $meta_value ),
+				esc_attr( $image_attributes[0] ),				
+				esc_attr ($image_attributes[1] ),
+				esc_attr ($image_attributes[2] )
+				);
+			
+		endif;
+
 
 		return $output;
 	}

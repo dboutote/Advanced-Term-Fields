@@ -29,8 +29,6 @@ final class WP_Term_Toolbox_Icons extends WP_Term_Toolbox {
 
 	public $version = '0.1.0';
 
-	public $db_version = '2015.12.24.1315';
-
 	public $meta_key = 'term_icon';
 
 	public $data_type = 'icon';

@@ -2,18 +2,40 @@
 	.column-<?php echo $this->custom_column_name; ?> {
 		width: 100px;
 	}
-	.term-<?php echo $this->data_type; ?> {
-		-webkit-font-smoothing: antialiased;
-		-moz-osx-font-smoothing: grayscale;
-		font-family: dashicons;
-		font-size: 25px;
-		font-weight: normal;
-		height: 25px;
-		line-height: 25px;
-		margin-top: 2px;
-		vertical-align: top;
-		width: 25px;
+	.term-<?php echo $this->data_type; ?> {	}
+	
+	#termimagediv {
+		width: 95%;
 	}
+	
+	#termimagediv img {
+		max-width: 100%;
+		height: auto;
+		width: auto;
+		background-image: -webkit-linear-gradient(45deg, #c4c4c4 25%, transparent 25%, transparent 75%, #c4c4c4 75%, #c4c4c4), -webkit-linear-gradient(45deg, #c4c4c4 25%, transparent 25%, transparent 75%, #c4c4c4 75%, #c4c4c4);
+		background-image: linear-gradient(45deg, #c4c4c4 25%, transparent 25%, transparent 75%, #c4c4c4 75%, #c4c4c4), linear-gradient(45deg, #c4c4c4 25%, transparent 25%, transparent 75%, #c4c4c4 75%, #c4c4c4);
+		background-position: 0 0, 10px 10px;
+		-webkit-background-size: 20px 20px;
+		background-size: 20px 20px;
+	}
+	
+	.set-term-thumbnail {
+		display: block;
+	}
+	
+
+	.col-thumbnail_id img,
+	.column-col-thumbnail_id img {
+		height: auto;
+		max-width: 100%;
+	}
+	
+	.inline-edit-row img {
+		max-width: 75px;
+	}
+	
+	
+	
 img.wp-term-images-media,
 .column-image img {
 	max-height: 25px;

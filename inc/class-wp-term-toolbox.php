@@ -36,8 +36,6 @@ abstract class WP_Term_Toolbox {
 
 	protected $version = '0.0.0';
 
-	protected $db_version = '2015.12.20.2020';
-
 	protected $db_version_key = '';
 
 	protected $meta_key = '';
@@ -293,25 +291,19 @@ abstract class WP_Term_Toolbox {
 	}
 
 
-	public function maybe_upgrade_database() 
+	public function maybe_upgrade_version() 
 	{
 		$stored_version = get_option( $this->db_version_key );
 
-		if ( version_compare( $stored_version, $this->db_version, '<' ) ) {
-			$this->upgrade_database( $stored_version, $this->db_version );
+		if ( version_compare( $stored_version, $this->version, '<' ) ) {
+			update_option( $this->db_version_key, $this->version );
 		}
-	}
-
-
-	public function upgrade_database( $stored_version = 0, $db_version  ) 
-	{
-		update_option( $this->db_version_key, $this->db_version );
 	}
 
 
 	public function upgrade_check() 
 	{
-		$this->maybe_upgrade_database();
+		$this->maybe_upgrade_version();
 	}
 
 
