@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Term Toolbox Class
+ * Advanced Term Meta Fields Class
  *
  * This class establishes the base functionality for adding custom meta fields to taxonomy terms.
  * Provides methods for the following:
@@ -26,13 +26,13 @@ if ( ! function_exists( 'add_filter' ) ) {
 }
 
 /**
- * Main WP Term Toolbox Class
+ * Advanced Term Meta Fields Class
  *
  * @version 1.0.0
  *
  * @since 0.1.0
  */
-abstract class WP_Term_Toolbox {
+abstract class Advanced_Term_Meta_Fields {
 
 	protected $version = '0.0.0';
 
@@ -117,7 +117,7 @@ abstract class WP_Term_Toolbox {
 			'meta_value',
 			'meta_value_num'
 			);
-		return apply_filters ( 'wp_tt_allowed_orderby_keys', $keys, $this->meta_key );
+		return apply_filters ( 'advanced_term_meta_fields_allowed_orderby_keys', $keys, $this->meta_key );
 	}
 
 
@@ -262,13 +262,13 @@ abstract class WP_Term_Toolbox {
 
 	public function get_db_version_key()
 	{
-		return "wp_term_toolbox_{$this->data_type}s_version";
+		return "advanced_term_meta_fields_{$this->data_type}s_version";
 	}
 
 
 	public function get_taxonomies( $args = array(), $meta_key = '' )
 	{
-		return WP_Term_Toolbox_Utils::get_taxonomies( $args = array(), $this->meta_key );
+		return ATMF_Utils::get_taxonomies( $args = array(), $this->meta_key );
 	}
 
 
@@ -364,20 +364,18 @@ abstract class WP_Term_Toolbox {
 
 	public function filter_terms_query()
 	{
+		add_filter( 'get_terms_args', array($this, 'filter_terms_args'), 10, 2 );
+		
 		add_filter( 'terms_clauses', array($this, 'filter_terms_clauses'), 10, 3 );
-		add_filter( 'get_terms_args', array($this, 'filter_terms_table_args'), 10, 2 );
 	}
-
-
-
+	
+	
 	/**
 	 * Filter the terms query SQL clauses.
 	 *
 	 * @see 'terms_clauses' filter in get_terms() wp-includes/taxonomy.php
 	 *
 	 * @since 0.1.0
-	 *
-	 * @todo add filter for $allowed_orderby_keys
 	 *
 	 * @param array $pieces     Terms query SQL clauses.
 	 * @param array $taxonomies An array of taxonomies.
@@ -388,6 +386,11 @@ abstract class WP_Term_Toolbox {
 	public function filter_terms_clauses( $pieces = array(), $taxonomies = array(), $args = array() )
 	{
 		global $wpdb;
+		
+		// Bail if there's no meta query
+		if( empty( $args['meta_query'] ) ) {
+			return $pieces ;
+		}		
 
 		// Bail if the meta_key in the args doesn't match the meta key for this term meta
 		if( isset( $args['meta_key'] ) && ! empty( $args['meta_key'] ) ) {
@@ -402,17 +405,12 @@ abstract class WP_Term_Toolbox {
 			return $pieces ;
 		}
 
-		// Bail if there's no meta query
-		if( empty( $args['meta_query'] ) ) {
-			return $pieces ;
-		}
-		
 		/**
 		 * Someone could set meta_type in get_terms() at a later point if Core adopts meta querying 
 		 * for terms like post types.
 		 */
 		$meta_type = (  isset( $args['meta_type'] ) && ! empty( $args['meta_type'] )  ) ? esc_sql( $args['meta_type'] ) : $this->meta_type;
-	
+
 		switch ( $args[ 'orderby' ] ) {
 			case $this->meta_key :
 			case 'meta_value' :
@@ -453,20 +451,20 @@ abstract class WP_Term_Toolbox {
 	 *
 	 * @return array $args The filtered terms query arguments.
 	 */
-	function filter_terms_table_args( $args, $taxonomies )
+	function filter_terms_args( $args, $taxonomies )
 	{
 		global $pagenow;
 
 		if( ! is_admin() || 'edit-tags.php' !== $pagenow ){
 			return $args;
 		}
-
+				
 		 // If we're not ordering by any of the allowed keys, return		 
 		$orderby = ( ! empty( $args['orderby'] ) ) ? $args['orderby'] : '' ;
 		if ( ! in_array( $orderby, $this->allowed_orderby_keys, true ) ) {
 			return $args ;
 		}
-
+		
 		// Set the meta query args
 		$args['meta_key'] = $this->meta_key;
 		$args['meta_query'] = array(

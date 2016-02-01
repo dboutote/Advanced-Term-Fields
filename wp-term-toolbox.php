@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: WP Term Toolbox
- * Plugin URI:  https://darrinb.com/plugins/wp-term-toolbox
+ * Plugin Name: Advanced Term Meta Fields
+ * Plugin URI:  https://darrinb.com/plugins/advanced-term-meta-fields
  * Author:      darrinb
  * Author URI:  https://profiles.wordpress.org/dbmartin/
  * Version:     0.1.0
@@ -24,8 +24,8 @@ if ( ! function_exists( 'add_filter' ) ) {
 }
  
 
-if ( ! defined( 'WP_TT_FILE' ) ) {
-	define( 'WP_TT_FILE', __FILE__ );
+if ( ! defined( 'ATMF_FILE' ) ) {
+	define( 'ATMF_FILE', __FILE__ );
 }
 
 
@@ -34,8 +34,8 @@ if ( ! defined( 'WP_TT_FILE' ) ) {
  * 
  * @since 0.1.0
  */
-include dirname( __FILE__ ) . '/inc/class-wp-term-toolbox-utils.php';
-add_action( 'plugins_loaded', array( 'WP_Term_Toolbox_Utils', 'compatibility_check' ) );
+include dirname( __FILE__ ) . '/inc/class-atmf-utils.php';
+add_action( 'plugins_loaded', array( 'ATMF_Utils', 'compatibility_check' ) );
 
 
 
@@ -50,30 +50,30 @@ include dirname( __FILE__ ) . '/test/functions.php';
  * 
  * @since 0.1.0
  */
-include dirname( __FILE__ ) . '/inc/class-wp-term-toolbox.php';
+include dirname( __FILE__ ) . '/inc/class-advanced-term-meta-fields.php';
 
 
 /**
- * Instantiate the main WP Term Toolbox Icons Class
+ * Instantiate the main Term Icons Class
  *
  * @since 0.1.0
  */
-function _wp_tt_icons_init(){
-	include dirname( __FILE__ ) . '/inc/class-wp-term-toolbox-icons.php';
-	$WP_Term_Toolbox_Icons = new WP_Term_Toolbox_Icons( __FILE__ );
-	$WP_Term_Toolbox_Icons->init();
+function _atmf_icons_init(){
+	include dirname( __FILE__ ) . '/inc/class-atmf-icons.php';
+	$ATMF_Icons = new ATMF_Icons( __FILE__ );
+	$ATMF_Icons->init();
 }
-add_action( 'init', '_wp_tt_icons_init', 99 );
+add_action( 'init', '_atmf_icons_init', 99 );
 
 
 /**
- * Instantiate the main WP Term Toolbox Images Class
+ * Instantiate the main Term Images Class
  *
  * @since 0.1.0
  */
-function _wp_tt_images_init(){
-	include dirname( __FILE__ ) . '/inc/class-wp-term-toolbox-images.php';
-	$WP_Term_Toolbox_Images = new WP_Term_Toolbox_Images( __FILE__ );
-	$WP_Term_Toolbox_Images->init();
+function _atmf_images_init(){
+	include dirname( __FILE__ ) . '/inc/class-atmf-images.php';
+	$ATMF_Images = new ATMF_Images( __FILE__ );
+	$ATMF_Images->init();
 }
-add_action( 'init', '_wp_tt_images_init', 99 );
+add_action( 'init', '_atmf_images_init', 99 );

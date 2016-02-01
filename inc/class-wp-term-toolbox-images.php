@@ -25,7 +25,7 @@ if ( ! function_exists( 'add_filter' ) ) {
  * @since 0.1.0
  *
  */
-final class WP_Term_Toolbox_Images extends WP_Term_Toolbox {
+final class ATMF_Images extends Advanced_Term_Meta_Fields {
 
 	public $version = '0.1.0';
 
@@ -57,9 +57,9 @@ final class WP_Term_Toolbox_Images extends WP_Term_Toolbox {
 	public function set_labels()
 	{
 		$this->labels = array(
-			'singular'    => esc_html__( 'Image',  'wp-term-toolbox' ),
-			'plural'      => esc_html__( 'Images', 'wp-term-toolbox' ),
-			'description' => esc_html__( 'Set a featured image for this term.', 'wp-term-toolbox' )
+			'singular'    => esc_html__( 'Image',  'adv-term-meta-fields' ),
+			'plural'      => esc_html__( 'Images', 'adv-term-meta-fields' ),
+			'description' => esc_html__( 'Set a featured image for this term.', 'adv-term-meta-fields' )
 		);
 	}
 
@@ -84,9 +84,9 @@ final class WP_Term_Toolbox_Images extends WP_Term_Toolbox {
 			'custom_column_name' => esc_html__( $this->custom_column_name ),
 			'meta_key'      => esc_html__( $this->meta_key ),
 			'data_type'     => esc_html__( $this->data_type ),
-			'insertMediaTitle' => esc_html__( 'Choose an Image', 'wp-term-toolbox' ),
-			'insertIntoPost'   => esc_html__( 'Set featured image', 'wp-term-toolbox' ),
-			'removeFromPost'   => esc_html__( 'Set featured image', 'wp-term-toolbox' ),
+			'insertMediaTitle' => esc_html__( 'Choose an Image', 'adv-term-meta-fields' ),
+			'insertIntoPost'   => esc_html__( 'Set featured image', 'adv-term-meta-fields' ),
+			'removeFromPost'   => esc_html__( 'Set featured image', 'adv-term-meta-fields' ),
 			'term_id'          => $term_id,
 			
 			
@@ -178,5 +178,63 @@ final class WP_Term_Toolbox_Images extends WP_Term_Toolbox {
 
 		echo $field;
 	}
+	
+	
+	/**
+	 * Filter terms listing in WP_Terms_List_Table table on edit-tags.php
+	 *
+	 * Adds the meta_query argument which tells WP to fire a new WP_Meta_Query() instance.
+	 * This handles all the custom SQL queries needed to sort by meta value.
+	 *
+	 * We have to specifically call for terms that have the meta key set and those that don't, or 
+	 * else WP will only return terms with the meta_key.
+	 *
+	 * Note: WP_Terms_List_Table checks $_REQUEST['orderby'] and sets $args['orderby'] when
+	 * displaying terms in wp-admin/edit-tags.php.
+	 *
+	 * Note: We have to override the order to sort by 'meta_value_num' since images are stored as
+	 * IDs.
+	 *
+	 * @see 'get_terms_args' filter in get_terms() wp-includes/taxonomy.php
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param array  $args       An array of terms query arguments.
+	 * @param array  $taxonomies An array of taxonomies.
+	 *
+	 * @return array $args The filtered terms query arguments.
+	 */
+	function filter_terms_args( $args, $taxonomies )
+	{
+		global $pagenow;
 
+		if( ! is_admin() || 'edit-tags.php' !== $pagenow ){
+			return $args;
+		}
+				
+		 // If we're not ordering by any of the allowed keys, return		 
+		$orderby = ( ! empty( $args['orderby'] ) ) ? $args['orderby'] : '' ;
+		if ( ! in_array( $orderby, $this->allowed_orderby_keys, true ) ) {
+			return $args ;
+		}
+		
+		// Set the meta query args
+		$args['meta_key'] = $this->meta_key;
+		$args['meta_query'] = array(
+			'relation' => 'OR',
+			array(
+				'key'=>$this->meta_key,
+				'compare' => 'EXISTS'
+			),
+			array(
+				'key'=>$this->meta_key,
+				'compare' => 'NOT EXISTS'
+			)
+		);
+		
+		$args['orderby'] = 'meta_value_num';
+
+		return $args;
+	}
+	
 }

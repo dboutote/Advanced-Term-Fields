@@ -8,20 +8,20 @@ if ( ! function_exists( 'add_filter' ) ) {
 }
 
 /**
- * Group of utility methods for use by WP Term Toolbox
+ * Group of utility methods for use by Advanced_Term_Meta_Fields
  *
  * All methods are static, this is basically a namespacing class wrapper.
  *
  * @since 0.1.0
  *
  */
-class WP_Term_Toolbox_Utils {
+class ATMF_Utils {
 
 	/**
 	 * @var string $plugin_name name of the plugin
 	 * @static
 	 */
-	public static $plugin_name = 'WP Term Toolbox';
+	public static $plugin_name = 'Advanced Term Meta Fields';
 
 
 	/**
@@ -42,7 +42,7 @@ class WP_Term_Toolbox_Utils {
 
 
 	static function _plugin_deactivate() {
-		deactivate_plugins( plugin_basename( WP_TT_FILE ) );
+		deactivate_plugins( plugin_basename( ADV_TERM_META_FILE ) );
 	}
 
 
@@ -83,14 +83,14 @@ class WP_Term_Toolbox_Utils {
 	 */
 	static function get_taxonomies( $args = array() , $meta_key = '' ) {
 
-		$defaults = apply_filters( "wp_term_toolbox_get_taxonomies_args", array( 'show_ui' => true ) );
-		$defaults = apply_filters( "wp_term_toolbox_{$meta_key}_get_taxonomies_args", $defaults );
+		$defaults = apply_filters( "advanced_term_meta_fields_get_taxonomies_args", array( 'show_ui' => true ) );
+		$defaults = apply_filters( "advanced_term_meta_fields_{$meta_key}_get_taxonomies_args", $defaults );
 
 		$r = wp_parse_args( $args, $defaults );
 
 		$taxonomies = get_taxonomies( $r );
 
-		return apply_filters('wp_term_toolbox_taxonomies', $taxonomies);
+		return apply_filters('advanced_term_meta_fields_taxonomies', $taxonomies);
 	}
 
 }

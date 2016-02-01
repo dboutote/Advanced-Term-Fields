@@ -25,7 +25,7 @@ if ( ! function_exists( 'add_filter' ) ) {
  * @since 0.1.0
  *
  */
-final class WP_Term_Toolbox_Icons extends WP_Term_Toolbox {
+final class ATMF_Icons extends Advanced_Term_Meta_Fields {
 
 	public $version = '0.1.0';
 
@@ -57,9 +57,9 @@ final class WP_Term_Toolbox_Icons extends WP_Term_Toolbox {
 	public function set_labels()
 	{
 		$this->labels = array(
-			'singular'    => esc_html__( 'Icon',  'wp-term-toolbox' ),
-			'plural'      => esc_html__( 'Icons', 'wp-term-toolbox' ),
-			'description' => esc_html__( 'Select an icon to represent this term.', 'wp-term-toolbox' )
+			'singular'    => esc_html__( 'Icon',  'adv-term-meta-fields' ),
+			'plural'      => esc_html__( 'Icons', 'adv-term-meta-fields' ),
+			'description' => esc_html__( 'Select an icon to represent this term.', 'adv-term-meta-fields' )
 		);
 	}
 
