@@ -3,9 +3,9 @@
 
     $('#the-list').on('click', '.editinline', function () {
         var tr_id = $(this).parents('tr').attr('id');
-        var meta_value = $('td.' + i10n_WPTTIcons.custom_column_name + ' i', '#' + tr_id).attr('data-' + i10n_WPTTIcons.data_type);
+        var meta_value = $('td.' + i10n_ATMFIcons.custom_column_name + ' i', '#' + tr_id).attr('data-' + i10n_ATMFIcons.data_type);
 
-        $(':input[name="' + i10n_WPTTIcons.meta_key + '"]', '.inline-edit-row').val(meta_value);
+        $(':input[name="' + i10n_ATMFIcons.meta_key + '"]', '.inline-edit-row').val(meta_value);
     });
 
     $('.icon-utils #term_icon').on('change', function () {

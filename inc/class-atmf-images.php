@@ -80,7 +80,7 @@ final class ATMF_Images extends Advanced_Term_Meta_Fields {
 			? (int) $_GET['tag_ID']
 			: 0;		
 
-		wp_localize_script( 'wp-tt-images', 'i10n_WPTTImages', array(
+		wp_localize_script( 'wp-tt-images', 'i10n_ATMFImages', array(
 			'custom_column_name' => esc_html__( $this->custom_column_name ),
 			'meta_key'      => esc_html__( $this->meta_key ),
 			'data_type'     => esc_html__( $this->data_type ),

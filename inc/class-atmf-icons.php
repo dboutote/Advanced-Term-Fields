@@ -74,7 +74,7 @@ final class ATMF_Icons extends Advanced_Term_Meta_Fields {
 		wp_enqueue_script( 'dashicons-picker', $this->url . 'js/dashicons-picker.js', array( 'jquery' ), '1.1', true );
 		wp_enqueue_script( 'wp-tt-icons', $this->url . 'js/icons.js', array( 'jquery', 'dashicons-picker' ), '', true );
 
-		wp_localize_script( 'wp-tt-icons', 'i10n_WPTTIcons', array(
+		wp_localize_script( 'wp-tt-icons', 'i10n_ATMFIcons', array(
 			'custom_column_name' => esc_html__( $this->custom_column_name ),
 			'meta_key'      => esc_html__( $this->meta_key ),
 			'data_type'     => esc_html__( $this->data_type ),
