@@ -42,8 +42,8 @@ final class Adv_Term_Fields_Images extends Advanced_Term_Meta_Fields {
 
 	public function init()
 	{
-		$this->show_custom_column( $this->taxonomies );
-		$this->show_custom_fields( $this->taxonomies );
+		$this->show_custom_column( $this->hooked_taxonomies );
+		$this->show_custom_fields( $this->hooked_taxonomies );
 		$this->register_meta();
 		$this->load_admin_functions();
 		$this->process_term_meta();

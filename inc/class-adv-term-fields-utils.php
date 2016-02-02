@@ -41,12 +41,14 @@ class Adv_Term_Fields_Utils {
 	}
 
 
-	static function _plugin_deactivate() {
+	static function _plugin_deactivate() 
+	{
 		deactivate_plugins( plugin_basename( ADV_TERM_FIELDS_FILE ) );
 	}
+	
 
-
-	static function _plugin_admin_notice() {
+	static function _plugin_admin_notice()
+	{
 		echo '<div class="error"><p>'
 			. sprintf(
 				__( '%1$s requires WordPress %2$s to function correctly. Unable to activate at this time.', 'wptt' ),
@@ -72,7 +74,7 @@ class Adv_Term_Fields_Utils {
 
 
 	/**
-	 * Return the taxonomies used by this plugin
+	 * Returns taxonomies used by this plugin
 	 *
 	 * @since 0.1.0
 	 *
@@ -83,14 +85,14 @@ class Adv_Term_Fields_Utils {
 	 */
 	static function get_taxonomies( $args = array() , $meta_key = '' ) {
 
-		$defaults = apply_filters( "advanced_term_meta_fields_get_taxonomies_args", array( 'show_ui' => true ) );
-		$defaults = apply_filters( "advanced_term_meta_fields_{$meta_key}_get_taxonomies_args", $defaults );
+		$defaults = apply_filters( "advanced_term_fields_get_taxonomies_args", array( 'show_ui' => true ) );
+		$defaults = apply_filters( "advanced_term_fields_{$meta_key}_get_taxonomies_args", $defaults );
 
 		$r = wp_parse_args( $args, $defaults );
 
-		$taxonomies = get_taxonomies( $r );
+		$hooked_taxonomies = get_taxonomies( $r );
 
-		return apply_filters('advanced_term_meta_fields_taxonomies', $taxonomies);
+		return apply_filters('advanced_term_fields_taxonomies', $hooked_taxonomies);
 	}
 
 }

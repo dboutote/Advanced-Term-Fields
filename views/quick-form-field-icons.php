@@ -13,7 +13,7 @@
 ?>
 
 <?php
-if ( ( $this->custom_column_name !== $column_name ) || ( 'edit-tags' !== $screen ) || ! in_array( $name, $this->taxonomies ) ) {
+if ( ( $this->custom_column_name !== $column_name ) || ( 'edit-tags' !== $screen ) || ! in_array( $name, $this->hooked_taxonomies ) ) {
 	return false;
 } ?>
 

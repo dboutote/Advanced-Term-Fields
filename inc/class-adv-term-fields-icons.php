@@ -31,9 +31,9 @@ final class Adv_Term_Fields_Icons extends Advanced_Term_Fields {
 
 	public $version = '0.1.0';
 
-	public $meta_key = '';
+	public $meta_key = 'term_icon';
 
-	public $data_type = '';
+	public $data_type = 'icon';
 
 
 	public function __construct( $file = '' )
@@ -44,8 +44,8 @@ final class Adv_Term_Fields_Icons extends Advanced_Term_Fields {
 
 	public function init()
 	{
-		$this->show_custom_column( $this->taxonomies );
-		$this->show_custom_fields( $this->taxonomies );
+		$this->show_custom_column( $this->hooked_taxonomies );
+		$this->show_custom_fields( $this->hooked_taxonomies );
 		$this->register_meta();
 		$this->load_admin_functions();
 		$this->process_term_meta();

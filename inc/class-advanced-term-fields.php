@@ -119,7 +119,7 @@ abstract class Advanced_Term_Fields {
 	 *
 	 * @var string
 	 */
-	protected $taxonomies = array();
+	protected $hooked_taxonomies = array();
 
 
 	/**
@@ -155,7 +155,7 @@ abstract class Advanced_Term_Fields {
 	/**
 	 * Base name for plugin
 	 *
-	 * E.g. "advanced-term-fields/advanced-term-fields.php"
+	 * e.g. "advanced-term-fields/advanced-term-fields.php"
 	 *
 	 * @since 0.1.0
 	 *
@@ -244,7 +244,7 @@ abstract class Advanced_Term_Fields {
 
 
 	/**
-	 * Allowed orderby keys
+	 * Allowed ORDERBY keys
 	 *
 	 * Used for filtering queries by meta value.
 	 *
@@ -257,14 +257,13 @@ abstract class Advanced_Term_Fields {
 	protected $allowed_orderby_keys = array();
 
 
-
 	/**
 	 * Constructor
 	 *
 	 * @access public
 	 *
 	 * @since 0.1.0
-	 * 
+	 *
 	 * @param string $file Full file path to calling plugin file
 	 */
 	public function __construct( $file = '' )
@@ -278,33 +277,25 @@ abstract class Advanced_Term_Fields {
 
 		$this->allowed_orderby_keys = $this->get_allowed_orderby_keys();
 		$this->custom_column_name   = $this->get_custom_column_name();
-		$this->taxonomies           = $this->get_taxonomies();
+		$this->hooked_taxonomies    = $this->get_taxonomies();
 		$this->db_version_key       = $this->get_db_version_key();
 
 		// check to make sure everything is set
 		$this->_check_required_props();
 	}
-	
 
+	
 	/**
-	 * Checks that all required class properties are set
-	 * 
+	 * Checks all required properties
+	 *
 	 * @see Advanced_Term_Fields::$_required_props
-	 * 
+	 *
 	 * @uses Advanced_Term_Fields::_check_required()
 	 *
 	 * @access private
 	 *
 	 * @since 0.1.0
 	 */
-	private function _check_required_props2()
-	{
-		foreach ( $this->_required_props  as $prop ) {
-			$this->_check_required( $prop );
-		}
-	}	
-	
-	
 	private function _check_required_props()
 	{
 		foreach ( $this->_required_props  as $prop ) {
@@ -313,26 +304,32 @@ abstract class Advanced_Term_Fields {
 			} catch (Exception $e) {
 				$msg = $e->getMessage();
 				$msg2 = ' property. <b>' . Adv_Term_Fields_Utils::$plugin_name . '</b> requires all sub classes set this field.';
+				
+				
+				$child_plugin = $this->file;
+				add_action('admin_init', function() use ( $child_plugin ) {
+					deactivate_plugins( plugin_basename( $child_plugin ) );
+				});
 				add_action('admin_notices', function() use ($msg, $msg2) {
 					echo '<div class="error"><p><b>Error:</b> ' , esc_html($msg) , $msg2 , '</p></div>';
-				});				
+				});
 			}
 		}
 	}
-	
-	
+
+
 	/**
-	 * Checks that a required class property is set
-	 * 
+	 * Checks if a required class property is set
+	 *
 	 * @see Advanced_Term_Fields::$_required_props
 	 * @see Advanced_Term_Fields::_check_required_props()
-	 * 
+	 *
 	 * @access private
 	 *
 	 * @since 0.1.0
 	 *
 	 * @param mixed $prop The class property to check
-	 * @throws 
+	 * @throws
 	 */
 	private function _check_required( $prop )
 	{
@@ -342,7 +339,7 @@ abstract class Advanced_Term_Fields {
 		} else {
 			$cleaned_prop = trim( $this->$prop );
 		};
-		
+
 		if( empty( $cleaned_prop ) || is_null( $cleaned_prop ) ){
 			$output = sprintf(
 				'No value set for %1$s::$%2$s',
@@ -351,11 +348,11 @@ abstract class Advanced_Term_Fields {
 				);
 			throw new Exception( $output );
 		}
-		
+
 		return true;
 	}
-	
-	
+
+
 	/**
 	 * Set labels for form fields
 	 *
@@ -367,19 +364,19 @@ abstract class Advanced_Term_Fields {
 	 */
 	abstract protected function set_labels();
 
-	
+
 	/**
 	 * Retrieve allowed ORDERBY keys
 	 *
 	 * Applies 'advanced_term_fields_allowed_orderby_keys' filter.
-	 * 
+	 *
 	 * @see Advanced_Term_Fields::filter_terms_clauses()
 	 * @see Advanced_Term_Fields::filter_terms_args()
 	 *
 	 * @access public
 	 *
 	 * @since 0.1.0
-	 * 
+	 *
 	 * @return array $keys Filtered array of allowed orderby keys
 	 */
 	public function get_allowed_orderby_keys()
@@ -392,7 +389,7 @@ abstract class Advanced_Term_Fields {
 		return apply_filters ( 'advanced_term_fields_allowed_orderby_keys', $keys, $this->meta_key );
 	}
 
-	
+
 	public function register_meta()
 	{
 		register_meta(
@@ -420,38 +417,38 @@ abstract class Advanced_Term_Fields {
 	}
 
 
-	public function show_custom_column( $taxonomies = array() )
+	public function show_custom_column( $hooked_taxonomies = array() )
 	{
 		if( ! $this->show_custom_column ) {
 			return;
 		}
 
-		if ( ! empty( $taxonomies ) ) :
-			foreach ( $taxonomies as $tax_name ) {
+		if ( ! empty( $hooked_taxonomies ) ) :
+			foreach ( $hooked_taxonomies as $tax_name ) {
 				add_filter( "manage_edit-{$tax_name}_columns", array( $this, 'add_column_header' ) );
 				add_filter( "manage_{$tax_name}_custom_column", array( $this, 'add_column_value' ), 10, 3 );
 				add_filter( "manage_edit-{$tax_name}_sortable_columns", array( $this, 'sortable_columns' ) );
 			}
 		endif;
 
-		return $taxonomies;
+		return $hooked_taxonomies;
 	}
 
 
-	public function show_custom_fields( $taxonomies = array() )
+	public function show_custom_fields( $hooked_taxonomies = array() )
 	{
 		if( ! $this->show_fields ) {
 			return;
 		}
 
-		if ( ! empty( $taxonomies ) ) :
-			foreach ( $taxonomies as $tax_name ) {
+		if ( ! empty( $hooked_taxonomies ) ) :
+			foreach ( $hooked_taxonomies as $tax_name ) {
 				add_action( "{$tax_name}_add_form_fields", array( $this, 'add_form_field' ) );
 				add_action( "{$tax_name}_edit_form_fields", array( $this, 'edit_form_field' ) );
 			}
 		endif;
 
-		return $taxonomies;
+		return $hooked_taxonomies;
 	}
 
 
