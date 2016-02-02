@@ -10,7 +10,7 @@
  */
 
 // No direct access
-if ( ! function_exists( 'add_filter' ) ) {
+if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );
 	exit();
@@ -25,7 +25,7 @@ if ( ! function_exists( 'add_filter' ) ) {
  * @since 0.1.0
  *
  */
-final class ATMF_Images extends Advanced_Term_Meta_Fields {
+final class Adv_Term_Fields_Images extends Advanced_Term_Meta_Fields {
 
 	public $version = '0.1.0';
 

@@ -1,4 +1,18 @@
 <?php
+/**
+ * Quick-edit form view
+ * 
+ * Displays the form field for quick-editing terms.
+ *
+ * @package Advanced_Term_Fields
+ * @subpackage Adv_Term_Fields_Icons\Views
+ *
+ * @since 0.1.0
+ *
+ */
+?>
+
+<?php
 if ( ( $this->custom_column_name !== $column_name ) || ( 'edit-tags' !== $screen ) || ! in_array( $name, $this->taxonomies ) ) {
 	return false;
 } ?>

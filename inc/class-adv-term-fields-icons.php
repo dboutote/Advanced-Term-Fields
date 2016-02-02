@@ -1,16 +1,19 @@
 <?php
 
 /**
- * Term Icon Class
+ * Adv_Term_Fields_Icons Class
  *
- * @version 0.1.0
+ * Adds icons for taxonomy terms.
+ * 
+ * @package Advanced_Term_Fields
+ * @subpackage Adv_Term_Fields_Icons
  *
  * @since 0.1.0
  *
  */
 
 // No direct access
-if ( ! function_exists( 'add_filter' ) ) {
+if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );
 	exit();
@@ -18,20 +21,19 @@ if ( ! function_exists( 'add_filter' ) ) {
 
 
 /**
- * Adds icons for taxonomy terms
  *
  * @version 1.0.0
  *
  * @since 0.1.0
  *
  */
-final class ATMF_Icons extends Advanced_Term_Meta_Fields {
+final class Adv_Term_Fields_Icons extends Advanced_Term_Fields {
 
 	public $version = '0.1.0';
 
-	public $meta_key = 'term_icon';
+	public $meta_key = '';
 
-	public $data_type = 'icon';
+	public $data_type = '';
 
 
 	public function __construct( $file = '' )

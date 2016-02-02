@@ -1,27 +1,27 @@
 <?php
 
 // No direct access
-if ( ! function_exists( 'add_filter' ) ) {
+if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );
 	exit();
 }
 
 /**
- * Group of utility methods for use by Advanced_Term_Meta_Fields
+ * Group of utility methods for use by Advanced_Term_Fields
  *
  * All methods are static, this is basically a namespacing class wrapper.
  *
  * @since 0.1.0
  *
  */
-class ATMF_Utils {
+class Adv_Term_Fields_Utils {
 
 	/**
 	 * @var string $plugin_name name of the plugin
 	 * @static
 	 */
-	public static $plugin_name = 'Advanced Term Meta Fields';
+	public static $plugin_name = 'Advanced Term Fields';
 
 
 	/**
@@ -42,7 +42,7 @@ class ATMF_Utils {
 
 
 	static function _plugin_deactivate() {
-		deactivate_plugins( plugin_basename( ADV_TERM_META_FILE ) );
+		deactivate_plugins( plugin_basename( ADV_TERM_FIELDS_FILE ) );
 	}
 
 

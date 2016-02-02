@@ -1,3 +1,17 @@
+<?php
+/**
+ * Edit form view
+ * 
+ * Displays the form field for editing terms.
+ *
+ * @package Advanced_Term_Fields
+ * @subpackage Adv_Term_Fields_Icons\Views
+ *
+ * @since 0.1.0
+ *
+ */
+?>
+
 <tr class="form-field <?php echo esc_attr( $this->meta_key ); ?>-wrap">
 
 	<th scope="row" valign="top">

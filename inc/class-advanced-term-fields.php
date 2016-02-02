@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Advanced Term Meta Fields Class
+ * Advanced Term Fields Class
  *
  * This class establishes the base functionality for adding custom meta fields to taxonomy terms.
  * Provides methods for the following:
@@ -12,125 +12,329 @@
  * Can be extended by other plugins or functions either through child classes or the provided
  * filters/action hooks.
  *
+ * @package Advanced_Term_Fields
+ *
  * @since 0.1.0
- *
- * @version 0.1.0
- *
  */
 
 // No direct access
-if ( ! function_exists( 'add_filter' ) ) {
+if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );
 	exit();
 }
 
+
 /**
- * Advanced Term Meta Fields Class
+ * Advanced_Term_Fields Class
  *
  * @version 1.0.0
  *
  * @since 0.1.0
  */
-abstract class Advanced_Term_Meta_Fields {
+abstract class Advanced_Term_Fields {
 
-	protected $version = '0.0.0';
+	/**
+	 * Version number
+	 *
+	 * @since 0.1.0
+	 *
+	 * @var string
+	 */
+	protected $version = '0.1.0';
 
+
+	/**
+	 * Database key
+	 *
+	 * For storing version number.
+	 *
+	 * @see Advanced_Term_Fields::get_db_version_key()
+	 *
+	 * @since 0.1.0
+	 *
+	 * @var string
+	 */
 	protected $db_version_key = '';
 
+
+	/**
+	 * Metadata database key
+	 *
+	 * For storing/retrieving the meta value.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @var string
+	 */
 	protected $meta_key = '';
 
+
+	/**
+	 * Default value to display in list table
+	 *
+	 * @since 0.1.0
+	 *
+	 * @var string
+	 */
 	protected $no_meta_value = '&#8212;';
 
+
+	/**
+	 * Name of column in list table
+	 *
+	 * @see Advanced_Term_Fields::get_custom_column_name()
+	 *
+	 * @since 0.1.0
+	 *
+	 * @var string
+	 */
 	protected $custom_column_name = '';
 
+
+	/**
+	 * Unique singular slug for meta type
+	 *
+	 * Used to create db version key. Also used in localizing js files.
+	 *
+	 * @see Advanced_Term_Fields::get_db_version_key()
+	 * @see Advanced_Term_Fields::enqueue_admin_scripts()
+	 *
+	 * @since 0.1.0
+	 *
+	 * @var string
+	 */
 	protected $data_type = '';
 
+
+	/**
+	 * Authorized taxonomies
+	 *
+	 * The taxonomies to hook into.
+	 *
+	 * @see Advanced_Term_Fields::get_taxonomies()
+	 * @see Adv_Term_Fields_Utils::get_taxonomies()
+	 *
+	 * @since 0.1.0
+	 *
+	 * @var string
+	 */
 	protected $taxonomies = array();
 
+
+	/**
+	 * Full file path to plugin file
+	 *
+	 * @since 0.1.0
+	 *
+	 * @var string
+	 */
 	protected $file = '';
 
+
+	/**
+	 * URL to plugin
+	 *
+	 * @since 0.1.0
+	 *
+	 * @var string
+	 */
 	protected $url = '';
 
+
+	/**
+	 * Filesystem directory path to plugin
+	 *
+	 * @since 0.1.0
+	 *
+	 * @var string
+	 */
 	protected $path = '';
 
+
+	/**
+	 * Base name for plugin
+	 *
+	 * E.g. "advanced-term-fields/advanced-term-fields.php"
+	 *
+	 * @since 0.1.0
+	 *
+	 * @var string
+	 */
 	protected $basename = '';
 
+
+	/**
+	 * Labels for form fields
+	 *
+	 * Used to build form fields.  Also used to output column header on list table
+	 *
+	 * @see Advanced_Term_Fields::set_labels()
+	 * @see Advanced_Term_Fields::add_column_header();
+	 *
+	 * @since 0.1.0
+	 *
+	 * @var array
+	 */
 	protected $labels = array(
 		'singular'    => '',
 		'plural'      => '',
 		'description' => ''
 	);
 
+
+	/**
+	 * Flag to display custom column
+	 *
+	 * Determines whether or not to show the meta value in a custom column on list table.
+	 *
+	 * @see Advanced_Term_Fields::show_custom_column()
+	 *
+	 * @since 0.1.0
+	 *
+	 * @var bool
+	 */
 	protected $show_custom_column = true;
 
+
+	/**
+	 * Flag to display custom column
+	 *
+	 * Determines whether or not to create custom fields for this meta value.
+	 *
+	 * @see Advanced_Term_Fields::show_custom_fields()
+	 *
+	 * @since 0.1.0
+	 *
+	 * @var bool
+	 */
 	protected $show_fields = true;
 
-	private $required_props = array(
+
+	/**
+	 * Class properties required to be set
+	 *
+	 * @see Advanced_Term_Fields::check_required_props()
+	 *
+	 * @since 0.1.0
+	 *
+	 * @var array
+	 */
+	private $_required_props = array(
 		'meta_key',
 		'data_type',
 		'labels',
 		);
 
+
 	/**
-	 * Used for filtering queries
+	 * Custom field type
 	 *
-	 * @var string $meta_type Custom field type. Can be any value accepted by WP_Meta_Query 
+	 * Used for filtering queries by meta value. Can be any value accepted by WP_Meta_Query.
+	 * e.g. 'NUMERIC', 'BINARY', 'CHAR', 'DATE', 'DATETIME', 'DECIMAL'
 	 *
+	 * @see Advanced_Term_Fields::filter_terms_clauses()
 	 * @see WP_Meta_Query wp-includes/class-wp-meta-query.php
+	 *
+	 * @since 0.1.0
+	 *
+	 * @var string
 	 */
 	protected $meta_type = '';
 
+
+	/**
+	 * Allowed orderby keys
+	 *
+	 * Used for filtering queries by meta value.
+	 *
+	 * @see Advanced_Term_Fields::get_allowed_orderby_keys()
+	 *
+	 * @since 0.1.0
+	 *
+	 * @var array
+	 */
 	protected $allowed_orderby_keys = array();
 
 
-	abstract protected function set_labels();
-	#abstract protected function set_meta_key();
-	#abstract protected function set_data_type();
 
-
+	/**
+	 * Constructor
+	 *
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 * 
+	 * @param string $file Full file path to calling plugin file
+	 */
 	public function __construct( $file = '' )
-	{		
-		
+	{
 		$this->file           = $file;
 		$this->url            = plugin_dir_url( $this->file );
 		$this->path           = plugin_dir_path( $this->file );
 		$this->basename       = plugin_basename( $this->file );
 
 		$this->set_labels();
-		
+
 		$this->allowed_orderby_keys = $this->get_allowed_orderby_keys();
 		$this->custom_column_name   = $this->get_custom_column_name();
 		$this->taxonomies           = $this->get_taxonomies();
 		$this->db_version_key       = $this->get_db_version_key();
-		
+
 		// check to make sure everything is set
-		$this->check_required_props();
-		
+		$this->_check_required_props();
 	}
-
-
-	public function get_allowed_orderby_keys()
-	{
-		$keys = array(
-			$this->meta_key,
-			'meta_value',
-			'meta_value_num'
-			);
-		return apply_filters ( 'advanced_term_meta_fields_allowed_orderby_keys', $keys, $this->meta_key );
-	}
-
-
-	private function check_required_props()
-	{
-		foreach ( $this->required_props  as $prop ) {
-			$this->check_required( $prop );
-		}
-
-	}
-
 	
-	private function check_required( $prop )
+
+	/**
+	 * Checks that all required class properties are set
+	 * 
+	 * @see Advanced_Term_Fields::$_required_props
+	 * 
+	 * @uses Advanced_Term_Fields::_check_required()
+	 *
+	 * @access private
+	 *
+	 * @since 0.1.0
+	 */
+	private function _check_required_props2()
+	{
+		foreach ( $this->_required_props  as $prop ) {
+			$this->_check_required( $prop );
+		}
+	}	
+	
+	
+	private function _check_required_props()
+	{
+		foreach ( $this->_required_props  as $prop ) {
+			try {
+				$this->_check_required( $prop );
+			} catch (Exception $e) {
+				$msg = $e->getMessage();
+				$msg2 = ' property. <b>' . Adv_Term_Fields_Utils::$plugin_name . '</b> requires all sub classes set this field.';
+				add_action('admin_notices', function() use ($msg, $msg2) {
+					echo '<div class="error"><p><b>Error:</b> ' , esc_html($msg) , $msg2 , '</p></div>';
+				});				
+			}
+		}
+	}
+	
+	
+	/**
+	 * Checks that a required class property is set
+	 * 
+	 * @see Advanced_Term_Fields::$_required_props
+	 * @see Advanced_Term_Fields::_check_required_props()
+	 * 
+	 * @access private
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param mixed $prop The class property to check
+	 * @throws 
+	 */
+	private function _check_required( $prop )
 	{
 		// clean arrays, check for empty values
 		if ( is_array( $this->$prop ) ) {
@@ -138,8 +342,8 @@ abstract class Advanced_Term_Meta_Fields {
 		} else {
 			$cleaned_prop = trim( $this->$prop );
 		};
-
-		if( empty( $cleaned_prop ) ){
+		
+		if( empty( $cleaned_prop ) || is_null( $cleaned_prop ) ){
 			$output = sprintf(
 				'No value set for %1$s::$%2$s',
 				get_class($this),
@@ -147,9 +351,48 @@ abstract class Advanced_Term_Meta_Fields {
 				);
 			throw new Exception( $output );
 		}
+		
+		return true;
+	}
+	
+	
+	/**
+	 * Set labels for form fields
+	 *
+	 * Requires child classes to set labels.
+	 *
+	 * @access protected
+	 *
+	 * @since 0.1.0
+	 */
+	abstract protected function set_labels();
+
+	
+	/**
+	 * Retrieve allowed ORDERBY keys
+	 *
+	 * Applies 'advanced_term_fields_allowed_orderby_keys' filter.
+	 * 
+	 * @see Advanced_Term_Fields::filter_terms_clauses()
+	 * @see Advanced_Term_Fields::filter_terms_args()
+	 *
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 * 
+	 * @return array $keys Filtered array of allowed orderby keys
+	 */
+	public function get_allowed_orderby_keys()
+	{
+		$keys = array(
+			$this->meta_key,
+			'meta_value',
+			'meta_value_num'
+			);
+		return apply_filters ( 'advanced_term_fields_allowed_orderby_keys', $keys, $this->meta_key );
 	}
 
-
+	
 	public function register_meta()
 	{
 		register_meta(
@@ -268,7 +511,7 @@ abstract class Advanced_Term_Meta_Fields {
 
 	public function get_taxonomies( $args = array(), $meta_key = '' )
 	{
-		return ATMF_Utils::get_taxonomies( $args = array(), $this->meta_key );
+		return Adv_Term_Fields_Utils::get_taxonomies( $args = array(), $this->meta_key );
 	}
 
 
@@ -291,7 +534,7 @@ abstract class Advanced_Term_Meta_Fields {
 	}
 
 
-	public function maybe_upgrade_version() 
+	public function maybe_upgrade_version()
 	{
 		$stored_version = get_option( $this->db_version_key );
 
@@ -301,7 +544,7 @@ abstract class Advanced_Term_Meta_Fields {
 	}
 
 
-	public function upgrade_check() 
+	public function upgrade_check()
 	{
 		$this->maybe_upgrade_version();
 	}
@@ -341,7 +584,7 @@ abstract class Advanced_Term_Meta_Fields {
 		if ( ! isset( $_POST["{$this->meta_key}_nonce"] ) || ! wp_verify_nonce( $_POST["{$this->meta_key}_nonce"], $this->basename ) ) {
 			return;
 		}
-		
+
 		$meta_value = ( ! empty( $_POST[$this->meta_key] ) ) ? $_POST[$this->meta_key] : '' ;
 
 		$this->set_term_meta( $term_id, $taxonomy, $meta_value );
@@ -365,11 +608,11 @@ abstract class Advanced_Term_Meta_Fields {
 	public function filter_terms_query()
 	{
 		add_filter( 'get_terms_args', array($this, 'filter_terms_args'), 10, 2 );
-		
+
 		add_filter( 'terms_clauses', array($this, 'filter_terms_clauses'), 10, 3 );
 	}
-	
-	
+
+
 	/**
 	 * Filter the terms query SQL clauses.
 	 *
@@ -386,11 +629,11 @@ abstract class Advanced_Term_Meta_Fields {
 	public function filter_terms_clauses( $pieces = array(), $taxonomies = array(), $args = array() )
 	{
 		global $wpdb;
-		
+
 		// Bail if there's no meta query
 		if( empty( $args['meta_query'] ) ) {
 			return $pieces ;
-		}		
+		}
 
 		// Bail if the meta_key in the args doesn't match the meta key for this term meta
 		if( isset( $args['meta_key'] ) && ! empty( $args['meta_key'] ) ) {
@@ -399,14 +642,14 @@ abstract class Advanced_Term_Meta_Fields {
 			}
 		}
 
-		 // If we're not ordering by any of the allowed keys, return		 
+		 // If we're not ordering by any of the allowed keys, return
 		$orderby = ( ! empty( $args['orderby'] ) ) ? $args['orderby'] : '' ;
 		if ( ! in_array( $orderby, $this->allowed_orderby_keys, true ) ) {
 			return $pieces ;
 		}
 
 		/**
-		 * Someone could set meta_type in get_terms() at a later point if Core adopts meta querying 
+		 * Someone could set meta_type in get_terms() at a later point if Core adopts meta querying
 		 * for terms like post types.
 		 */
 		$meta_type = (  isset( $args['meta_type'] ) && ! empty( $args['meta_type'] )  ) ? esc_sql( $args['meta_type'] ) : $this->meta_type;
@@ -436,7 +679,7 @@ abstract class Advanced_Term_Meta_Fields {
 	 * Adds the meta_query argument which tells WP to fire a new WP_Meta_Query() instance.
 	 * This handles all the custom SQL queries needed to sort by meta value.
 	 *
-	 * We have to specifically call for terms that have the meta key set and those that don't, or 
+	 * We have to specifically call for terms that have the meta key set and those that don't, or
 	 * else WP will only return terms with the meta_key.
 	 *
 	 * Note: WP_Terms_List_Table checks $_REQUEST['orderby'] and sets $args['orderby'] when
@@ -458,13 +701,13 @@ abstract class Advanced_Term_Meta_Fields {
 		if( ! is_admin() || 'edit-tags.php' !== $pagenow ){
 			return $args;
 		}
-				
-		 // If we're not ordering by any of the allowed keys, return		 
+
+		 // If we're not ordering by any of the allowed keys, return
 		$orderby = ( ! empty( $args['orderby'] ) ) ? $args['orderby'] : '' ;
 		if ( ! in_array( $orderby, $this->allowed_orderby_keys, true ) ) {
 			return $args ;
 		}
-		
+
 		// Set the meta query args
 		$args['meta_key'] = $this->meta_key;
 		$args['meta_query'] = array(
