@@ -65,7 +65,7 @@ include dirname( __FILE__ ) . '/inc/class-advanced-term-fields.php';
 
 
 /**
- * Instantiate the main Term Icons Class
+ * Instantiates the main Term Icons Class
  *
  * @since 0.1.0
  */
@@ -78,7 +78,7 @@ add_action( 'init', '_adv_term_fields_init_icons', 99 );
 
 
 /**
- * Instantiate the main Term Images Class
+ * Instantiates the main Term Images Class
  *
  * @since 0.1.0
  */

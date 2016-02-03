@@ -119,7 +119,7 @@ abstract class Advanced_Term_Fields {
 	 * @var string
 	 */
 	protected $allowed_taxonomies = array();
-	
+
 
 	/**
 	 * Full file path to plugin file
@@ -176,8 +176,8 @@ abstract class Advanced_Term_Fields {
 	 * @var array
 	 */
 	protected $labels = array(
-		'singular'    => '',
-		'plural'      => '',
+		'singular'	=> '',
+		'plural'	  => '',
 		'description' => ''
 		);
 
@@ -267,17 +267,17 @@ abstract class Advanced_Term_Fields {
 	 */
 	public function __construct( $file = '' )
 	{
-		$this->file      = $file;
-		$this->url       = plugin_dir_url( $this->file );
-		$this->path      = plugin_dir_path( $this->file );
+		$this->file	  = $file;
+		$this->url	   = plugin_dir_url( $this->file );
+		$this->path	  = plugin_dir_path( $this->file );
 		$this->basename  = plugin_basename( $this->file );
 
 		$this->set_labels();
 
 		$this->allowed_orderby_keys  = $this->get_allowed_orderby_keys();
-		$this->custom_column_name    = $this->get_custom_column_name();
-		$this->allowed_taxonomies    = $this->get_taxonomies();
-		$this->db_version_key        = $this->get_db_version_key();
+		$this->custom_column_name	= $this->get_custom_column_name();
+		$this->allowed_taxonomies	= $this->get_taxonomies();
+		$this->db_version_key		= $this->get_db_version_key();
 
 		// check to make sure everything is set
 		$this->_check_required_props();
@@ -468,10 +468,10 @@ abstract class Advanced_Term_Fields {
 	 *
 	 * @param bool   $allowed  Is the user allowed to make the change.
 	 * @param string $meta_key The meta key.
-	 * @param int    $post_id  The post ojbect ID.
-	 * @param int    $user_id  The user ID.
-	 * @param string $cap      The meta capability.
-	 * @param array  $caps     An array of capabilities.
+	 * @param int	$post_id  The post ojbect ID.
+	 * @param int	$user_id  The user ID.
+	 * @param string $cap	  The meta capability.
+	 * @param array  $caps	 An array of capabilities.
 	 *
 	 * @return boolean True if allowed to view the meta field by default, false if else.
 	 */
@@ -525,15 +525,15 @@ abstract class Advanced_Term_Fields {
 	}
 
 
-	/** 
+	/**
 	 * Adds custom column to list table column array
 	 *
 	 * @see Advanced_Term_Fields::show_custom_column()
-	 * 
+	 *
 	 * @uses Advanced_Term_Fields::$custom_column_name
 	 * @uses Advanced_Term_Fields::$labels
 	 *
-	 * 
+	 *
 	 * @access public
 	 *
 	 * @since 0.1.0
@@ -548,25 +548,25 @@ abstract class Advanced_Term_Fields {
 
 		return $columns;
 	}
-	
-	
-	/** 
+
+
+	/**
 	 * Displays custom meta value in the terms list table
 	 *
 	 * @see Advanced_Term_Fields::show_custom_column()
-	 * 
+	 *
 	 * @uses Advanced_Term_Fields::$custom_column_name
 	 * @uses Advanced_Term_Fields::custom_column_output()
 	 * @uses Advanced_Term_Fields::$no_meta_value
-	 * @uses Advanced_Term_Fields::get_meta()	 
+	 * @uses Advanced_Term_Fields::get_meta()
 	 *
 	 * @access public
 	 *
 	 * @since 0.1.0
 	 *
-	 * @param string $empty       Blank string.
+	 * @param string $empty	   Blank string.
 	 * @param string $column_name Name of the column.
-	 * @param int    $term_id     Term ID.
+	 * @param int	$term_id	 Term ID.
 	 *
 	 * @return array $columns The column names.
 	 */
@@ -584,9 +584,9 @@ abstract class Advanced_Term_Fields {
 		}
 
 		echo $return_value;
-	}	
-	
-	
+	}
+
+
 	/**
 	 * Displays meta value in custom column
 	 *
@@ -594,19 +594,19 @@ abstract class Advanced_Term_Fields {
 	 *
 	 * @access protected
 	 *
-     * @since 0.1.0
-     * 	 
+	 * @since 0.1.0
+	 *
 	 * @param string $meta_value The stored meta value to be displayed.
 	 */
 	public function custom_column_output( $meta_value ) {}
 
-	
-	/** 
+
+	/**
 	 * Sets custom column sortable
 	 *
 	 * @see Advanced_Term_Fields::show_custom_column()
 	 * @see wp-admin/includes/class-wp-list-table.php
-	 * 
+	 *
 	 * @uses Advanced_Term_Fields::$custom_column_name
 	 * @uses Advanced_Term_Fields::$meta_key
 	 *
@@ -624,8 +624,8 @@ abstract class Advanced_Term_Fields {
 
 		return $columns;
 	}
-	
-	
+
+
 	/**
 	 * Displays form fields on term admin pages
 	 *
@@ -653,12 +653,12 @@ abstract class Advanced_Term_Fields {
 		if ( ! empty( $allowed_taxonomies ) ) :
 			foreach ( $allowed_taxonomies as $tax_name ) {
 				add_action( "{$tax_name}_add_form_fields", array( $this, 'add_form_field' ) );
-				add_action( "{$tax_name}_edit_form_fields", array( $this, 'edit_form_field'), 10, 2 );				
+				add_action( "{$tax_name}_edit_form_fields", array( $this, 'edit_form_field'), 10, 2 );
 				add_action( 'quick_edit_custom_box', array( $this, 'quick_edit_form_field' ), 10, 3 );
 			}
 		endif;
-		
-		
+
+
 
 		return $allowed_taxonomies;
 	}
@@ -668,7 +668,7 @@ abstract class Advanced_Term_Fields {
 	 * Displays form field on Add Term form
 	 *
 	 * @see Advanced_Term_Fields::show_custom_fields()
-     *
+	 *
 	 * @uses Advanced_Term_Fields::$basename
 	 * @uses Advanced_Term_Fields::$meta_key
 	 * @uses Advanced_Term_Fields::$file
@@ -684,12 +684,12 @@ abstract class Advanced_Term_Fields {
 	 */
 	public function add_form_field( $taxonomy ){}
 
-	
+
 	/**
 	 * Displays form field on Edit Term form
 	 *
 	 * @see Advanced_Term_Fields::show_custom_fields()
-     *
+	 *
 	 * @uses Advanced_Term_Fields::$basename
 	 * @uses Advanced_Term_Fields::$meta_key
 	 * @uses Advanced_Term_Fields::$file
@@ -704,8 +704,8 @@ abstract class Advanced_Term_Fields {
 	 * @return null
 	 */
 	public function edit_form_field( $term, $taxonomy ){}
-	
-	
+
+
 	/**
 	 * Displays form field on Quick Edit Term form
 	 *
@@ -716,14 +716,14 @@ abstract class Advanced_Term_Fields {
 	 * @uses Advanced_Term_Fields::$meta_key
 	 * @uses Advanced_Term_Fields::$file
 	 * @uses WordPress wp_nonce_field() To build nonce for form field.
-	 * 
+	 *
 	 * @access public
 	 *
 	 * @since 0.1.0
 	 *
 	 * @param string $column_name Name of the column to edit.
-	 * @param string $screen      The screen name.
-	 * @param string $taxonomy    Current taxonomy slug.
+	 * @param string $screen	  The screen name.
+	 * @param string $taxonomy	Current taxonomy slug.
 	 *
 	 * @return null
 	 */
@@ -739,9 +739,9 @@ abstract class Advanced_Term_Fields {
 	 * Retrieves the stored value
 	 *
 	 * @see https://developer.wordpress.org/reference/functions/get_term_meta/
-	 * 
+	 *
 	 * @uses WordPress get_term_meta()
-	 * 
+	 *
 	 * @access public
 	 *
 	 * @since 0.1.0
@@ -756,9 +756,9 @@ abstract class Advanced_Term_Fields {
 
 	/**
 	 * Returns the database key for the meta key version
-	 * 
+	 *
 	 * @uses Advanced_Term_Fields::$meta_key
-	 * 
+	 *
 	 * @access public
 	 *
 	 * @since 0.1.0
@@ -771,7 +771,7 @@ abstract class Advanced_Term_Fields {
 	}
 
 
-	
+
 	/**
 	 * Returns taxonomies used meta key
 	 *
@@ -781,7 +781,7 @@ abstract class Advanced_Term_Fields {
 	 * @uses WordPress get_taxonomies()
 	 *
 	 * @since 0.1.0
-	 * 
+	 *
 	 * @return array $allowed_taxonomies Filtered array of taxonomies.
 	 */
 	public function get_taxonomies()
@@ -799,9 +799,9 @@ abstract class Advanced_Term_Fields {
 	 * Builds column name for meta field
 	 *
 	 * Note: Relying on $meta_key alone throws an error with 'dashicons-picker' script
-	 * 
+	 *
 	 * @uses Advanced_Term_Fields::$meta_key
-	 * 
+	 *
 	 * @access public
 	 *
 	 * @since 0.1.0
@@ -816,14 +816,14 @@ abstract class Advanced_Term_Fields {
 
 	/**
 	 * Loads various admin functions
-	 * 
+	 *
 	 * - Checks for version update.
 	 * - Loads js/css scripts
-	 * 
+	 *
 	 * @access public
 	 *
 	 * @since 0.1.0
-	 * 
+	 *
 	 * @return void
 	 */
 	public function load_admin_functions()
@@ -832,18 +832,18 @@ abstract class Advanced_Term_Fields {
 		add_action( 'load-edit-tags.php', array( $this, 'load_admin_scripts'  ) );
 	}
 
-	
+
 	/**
 	 * Loads various admin functions
-	 * 
+	 *
 	 * @uses Advanced_Term_Fields::$db_version_key
 	 * @uses version_compare()
 	 * @uses WordPress update_option()
-	 * 
+	 *
 	 * @access public
 	 *
 	 * @since 0.1.0
-	 * 
+	 *
 	 * @return void
 	 */
 	public function upgrade_check()
@@ -855,16 +855,16 @@ abstract class Advanced_Term_Fields {
 		}
 	}
 
-	
+
 	/**
 	 * Loads js/css admin scripts
-	 *  
+	 *
 	 * Note: Only loads js/css on edit-tags.php
-	 * 
+	 *
 	 * @access public
 	 *
 	 * @since 0.1.0
-	 * 
+	 *
 	 * @return void
 	 */
 	public function load_admin_scripts()
@@ -873,35 +873,47 @@ abstract class Advanced_Term_Fields {
 		add_action( 'admin_head', array( $this, 'admin_head_styles' ) );
 	}
 
-	
+
 	/**
 	 * Loads js admin scripts
-	 *  
+	 *
 	 * Note: Only loads on edit-tags.php
-	 * 
+	 *
 	 * @access public
 	 *
 	 * @since 0.1.0
-	 * 
+	 *
 	 * @return void
 	 */
 	public function enqueue_admin_scripts( $hook ){}
 
-	
+
 	/**
 	 * Prints out css styles in admin head
-	 *  
+	 *
 	 * Note: Only loads on edit-tags.php
-	 * 
+	 *
 	 * @access public
 	 *
 	 * @since 0.1.0
-	 * 
+	 *
 	 * @return void
 	 */
 	public function admin_head_styles(){}
 
 
+	/**
+	 * Loads term-managing methods
+	 *
+	 * - fires on 'create_term' filter
+	 * - fires on 'edit_term' filter
+	 *
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return void
+	 */
 	public function process_term_meta()
 	{
 		add_action( 'create_term', array( $this, 'save_term_meta' ), 10, 2 );
@@ -909,6 +921,22 @@ abstract class Advanced_Term_Fields {
 	}
 
 
+	/**
+	 * Checks meta value before processing
+	 *
+	 * Checks for nonce.
+	 *
+	 * @uses Advanced_Term_Fields::set_term_meta()
+	 *
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param int	$term_id  Term ID.
+	 * @param string $taxonomy The taxonomy for the term.
+	 *
+	 * @return void|null If nonce isn't set.
+	 */
 	public function save_term_meta( $term_id = 0, $taxonomy = '' )
 	{
 		if ( ! isset( $_POST["{$this->meta_key}_nonce"] ) || ! wp_verify_nonce( $_POST["{$this->meta_key}_nonce"], $this->basename ) ) {
@@ -921,6 +949,28 @@ abstract class Advanced_Term_Fields {
 	}
 
 
+	/**
+	 * Updates meta value
+	 *
+	 * @see https://developer.wordpress.org/reference/functions/delete_term_meta/
+	 * @see https://developer.wordpress.org/reference/functions/update_term_meta/
+	 * @see https://developer.wordpress.org/reference/functions/clean_term_cache/
+	 *
+	 * @uses WordPress delete_term_meta()
+	 * @uses WordPress update_term_meta()
+	 * @uses WordPress clean_term_cache()
+	 *
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param int	$term_id	 Term ID.
+	 * @param string $taxonomy	The taxonomy for the term.
+	 * @param mixed  $meta_value  The value to be updated.
+	 * @param bool   $clean_cache Whether to clean the term cache.
+	 *
+	 * @return void|null If nonce isn't set.
+	 */
 	public function set_term_meta( $term_id = 0, $taxonomy = '', $meta_value = '', $clean_cache = false )
 	{
 		if ( empty( $meta_value ) ) {
@@ -934,7 +984,18 @@ abstract class Advanced_Term_Fields {
 		}
 	}
 
-
+	/**
+	 * Loads term query methods
+	 *
+	 * - fires on 'get_terms_args' filter
+	 * - fires on 'terms_clauses' filter
+	 *
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return void
+	 */
 	public function filter_terms_query()
 	{
 		add_filter( 'get_terms_args', array($this, 'filter_terms_args'), 10, 2 );
@@ -949,9 +1010,9 @@ abstract class Advanced_Term_Fields {
 	 *
 	 * @since 0.1.0
 	 *
-	 * @param array $pieces     Terms query SQL clauses.
+	 * @param array $pieces	 Terms query SQL clauses.
 	 * @param array $taxonomies An array of taxonomies.
-	 * @param array $args       An array of terms query arguments.
+	 * @param array $args	   An array of terms query arguments.
 	 *
 	 * @return array $pieces The filtered SQL clauses
 	 */
@@ -1018,7 +1079,7 @@ abstract class Advanced_Term_Fields {
 	 *
 	 * @since 0.1.0
 	 *
-	 * @param array  $args       An array of terms query arguments.
+	 * @param array  $args	   An array of terms query arguments.
 	 * @param array  $taxonomies An array of taxonomies.
 	 *
 	 * @return array $args The filtered terms query arguments.
