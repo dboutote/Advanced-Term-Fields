@@ -23,11 +23,12 @@ function wp_term_term_image_get_taxonomies_args($args){
 
 
 
-function sanitize_term_meta_term_icon( $meta_value, $meta_key ){
+function sanitize_term_meta_term_icon( $meta_value, $meta_key ){	
 	return $meta_value;
+	
 }
 
-//add_filter( "sanitize_term_meta_term_icon", 'sanitize_term_meta_term_icon', 10, 2 );
+add_filter( "sanitize_term_meta_term_icon", 'sanitize_term_meta_term_icon', 10, 2 );
 
 
 

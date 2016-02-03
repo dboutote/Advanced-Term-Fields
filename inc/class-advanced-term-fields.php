@@ -286,7 +286,7 @@ abstract class Advanced_Term_Fields {
 
 	
 	/**
-	 * Checks all required properties
+	 * Checks required properties for Class
 	 *
 	 * @see Advanced_Term_Fields::$_required_props
 	 *
@@ -305,7 +305,7 @@ abstract class Advanced_Term_Fields {
 				$msg = $e->getMessage();
 				$msg2 = ' property. <b>' . Adv_Term_Fields_Utils::$plugin_name . '</b> requires all sub classes set this field.';
 				
-				
+				_debug($e);
 				$child_plugin = $this->file;
 				add_action('admin_init', function() use ( $child_plugin ) {
 					deactivate_plugins( plugin_basename( $child_plugin ) );
@@ -329,7 +329,8 @@ abstract class Advanced_Term_Fields {
 	 * @since 0.1.0
 	 *
 	 * @param mixed $prop The class property to check
-	 * @throws
+	 * 
+	 * @throws Exception if the property is not set
 	 */
 	private function _check_required( $prop )
 	{
@@ -354,7 +355,7 @@ abstract class Advanced_Term_Fields {
 
 
 	/**
-	 * Set labels for form fields
+	 * Sets labels for form fields
 	 *
 	 * Requires child classes to set labels.
 	 *
@@ -377,7 +378,7 @@ abstract class Advanced_Term_Fields {
 	 *
 	 * @since 0.1.0
 	 *
-	 * @return array $keys Filtered array of allowed orderby keys
+	 * @return array $keys Filtered array of allowed ORDERBY keys
 	 */
 	public function get_allowed_orderby_keys()
 	{
@@ -390,6 +391,19 @@ abstract class Advanced_Term_Fields {
 	}
 
 
+	/**
+	 * Registers term meta, key, and callbacks
+	 *
+	 * @uses WordPress\Meta register_meta()
+	 * 
+	 * @see https://codex.wordpress.org/Function_Reference/register_meta
+	 *
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return void
+	 */
 	public function register_meta()
 	{
 		register_meta(
@@ -400,19 +414,56 @@ abstract class Advanced_Term_Fields {
 		);
 	}
 
-
+	
+	/**
+	 * Sanitizes meta key value
+	 *
+	 * A function or method to call when sanitizing the value of a meta key.
+	 * Used with "sanitize_{$meta_type}_meta_{$meta_key}" filter
+	 * 
+	 * @see https://codex.wordpress.org/Function_Reference/register_meta
+	 *
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param mixed $data The meta value being stored.
+	 *
+	 * @return mixed $data The sanitized meta value.
+	 */
 	public function sanitize_callback( $data = '' )
 	{
 		return $data;
 	}
 
-
+	
+	/**
+	 * Checks capability for meta process
+	 *
+	 * A function or method to call when performing edit_post_meta, 
+	 * add_post_meta, and delete_post_meta capability checks. 
+	 * Used with "auth_{$meta_type}_meta_{$meta_key}" filter.
+	 * 
+	 * @see https://codex.wordpress.org/Function_Reference/register_meta
+	 *
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param  bool    $allowed  Is the user allowed to make the change.
+	 * @param  string  $meta_key The meta key.
+	 * @param  int     $post_id  The post ojbect ID.
+	 * @param  int     $user_id  The user ID.
+	 * @param  string  $cap      The meta capability.
+	 * @param  array   $caps     An array of capabilities.
+	 *
+	 * @return boolean True if allowed to view the meta field by default, false if else.
+	 */
 	public function auth_callback( $allowed = false, $meta_key = '', $post_id = 0, $user_id = 0, $cap = '', $caps = array() )
 	{
 		if ( $meta_key !== $this->meta_key ) {
 			return $allowed;
 		}
-
 		return $allowed;
 	}
 
