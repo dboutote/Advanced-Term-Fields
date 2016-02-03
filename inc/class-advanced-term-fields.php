@@ -71,7 +71,7 @@ abstract class Advanced_Term_Fields {
 
 
 	/**
-	 * Default value to display in list table
+	 * Default value to display in the terms list table
 	 *
 	 * @since 0.1.0
 	 *
@@ -81,7 +81,7 @@ abstract class Advanced_Term_Fields {
 
 
 	/**
-	 * Name of column in list table
+	 * Name of column in the terms list table
 	 *
 	 * @see Advanced_Term_Fields::get_custom_column_name()
 	 *
@@ -95,9 +95,8 @@ abstract class Advanced_Term_Fields {
 	/**
 	 * Unique singular slug for meta type
 	 *
-	 * Used to create db version key. Also used in localizing js files.
+	 * Used in localizing js files.
 	 *
-	 * @see Advanced_Term_Fields::get_db_version_key()
 	 * @see Advanced_Term_Fields::enqueue_admin_scripts()
 	 *
 	 * @since 0.1.0
@@ -119,8 +118,8 @@ abstract class Advanced_Term_Fields {
 	 *
 	 * @var string
 	 */
-	protected $hooked_taxonomies = array();
-
+	protected $allowed_taxonomies = array();
+	
 
 	/**
 	 * Full file path to plugin file
@@ -167,7 +166,7 @@ abstract class Advanced_Term_Fields {
 	/**
 	 * Labels for form fields
 	 *
-	 * Used to build form fields.  Also used to output column header on list table
+	 * Used to build form fields.  Also used to output column header on the terms list table
 	 *
 	 * @see Advanced_Term_Fields::set_labels()
 	 * @see Advanced_Term_Fields::add_column_header();
@@ -180,13 +179,13 @@ abstract class Advanced_Term_Fields {
 		'singular'    => '',
 		'plural'      => '',
 		'description' => ''
-	);
+		);
 
 
 	/**
 	 * Flag to display custom column
 	 *
-	 * Determines whether or not to show the meta value in a custom column on list table.
+	 * Determines whether or not to show the meta value in a custom column on the terms list table.
 	 *
 	 * @see Advanced_Term_Fields::show_custom_column()
 	 *
@@ -208,7 +207,7 @@ abstract class Advanced_Term_Fields {
 	 *
 	 * @var bool
 	 */
-	protected $show_fields = true;
+	protected $show_custom_fields = true;
 
 
 	/**
@@ -268,23 +267,23 @@ abstract class Advanced_Term_Fields {
 	 */
 	public function __construct( $file = '' )
 	{
-		$this->file           = $file;
-		$this->url            = plugin_dir_url( $this->file );
-		$this->path           = plugin_dir_path( $this->file );
-		$this->basename       = plugin_basename( $this->file );
+		$this->file      = $file;
+		$this->url       = plugin_dir_url( $this->file );
+		$this->path      = plugin_dir_path( $this->file );
+		$this->basename  = plugin_basename( $this->file );
 
 		$this->set_labels();
 
-		$this->allowed_orderby_keys = $this->get_allowed_orderby_keys();
-		$this->custom_column_name   = $this->get_custom_column_name();
-		$this->hooked_taxonomies    = $this->get_taxonomies();
-		$this->db_version_key       = $this->get_db_version_key();
+		$this->allowed_orderby_keys  = $this->get_allowed_orderby_keys();
+		$this->custom_column_name    = $this->get_custom_column_name();
+		$this->allowed_taxonomies    = $this->get_taxonomies();
+		$this->db_version_key        = $this->get_db_version_key();
 
 		// check to make sure everything is set
 		$this->_check_required_props();
 	}
 
-	
+
 	/**
 	 * Checks required properties for Class
 	 *
@@ -300,19 +299,38 @@ abstract class Advanced_Term_Fields {
 	{
 		foreach ( $this->_required_props  as $prop ) {
 			try {
+
 				$this->_check_required( $prop );
+
 			} catch (Exception $e) {
-				$msg = $e->getMessage();
-				$msg2 = ' property. <b>' . Adv_Term_Fields_Utils::$plugin_name . '</b> requires all sub classes set this field.';
-				
-				_debug($e);
-				$child_plugin = $this->file;
-				add_action('admin_init', function() use ( $child_plugin ) {
-					deactivate_plugins( plugin_basename( $child_plugin ) );
+
+				$e_msg = $e->getMessage();
+				$parent_msg = '<b>' . Adv_Term_Fields_Utils::$plugin_name . '</b> requires all inheriting classes set this property.';
+
+				// Which child plugin is causing the issue?
+				$child_plugin_file = $this->file;
+				$child_plugin_data = get_file_data( $child_plugin_file, array( 'Name' => 'Plugin Name' ), 'plugin' );
+				$child_plugin_name = ( ! empty($child_plugin_data['Name']) ) ? esc_html( $child_plugin_data['Name'] ) : '';
+				$child_msg = 'Unable to activate <b>' . $child_plugin_name . '</b>.';
+
+				$display_msg = sprintf(
+					'<div class="error"><p><b>Error:</b> %1$s %2$s %3$s</p></div>',
+					$e_msg,
+					$parent_msg,
+					$child_msg
+					);
+
+				// deactivate the child plugin
+				add_action('admin_init', function() use ( $child_plugin_file ) {
+					deactivate_plugins( plugin_basename( $child_plugin_file ) );
 				});
-				add_action('admin_notices', function() use ($msg, $msg2) {
-					echo '<div class="error"><p><b>Error:</b> ' , esc_html($msg) , $msg2 , '</p></div>';
+
+				// let the user know
+				add_action('admin_notices', function() use ( $display_msg ) {
+					echo $display_msg;
+
 				});
+
 			}
 		}
 	}
@@ -328,22 +346,20 @@ abstract class Advanced_Term_Fields {
 	 *
 	 * @since 0.1.0
 	 *
-	 * @param mixed $prop The class property to check
-	 * 
-	 * @throws Exception if the property is not set
+	 * @param mixed $prop The class property to check.
+	 *
+	 * @throws Exception if the property is not set.
+	 *
+	 * @return mixed bool|Exception
 	 */
 	private function _check_required( $prop )
 	{
 		// clean arrays, check for empty values
-		if ( is_array( $this->$prop ) ) {
-			$cleaned_prop = array_filter( $this->$prop );
-		} else {
-			$cleaned_prop = trim( $this->$prop );
-		};
+		$cleaned_prop = ( is_array( $this->$prop ) ) ? array_filter( $this->$prop ) : trim( $this->$prop );
 
 		if( empty( $cleaned_prop ) || is_null( $cleaned_prop ) ){
 			$output = sprintf(
-				'No value set for %1$s::$%2$s',
+				'No value set for <code>%1$s::$%2$s</code>',
 				get_class($this),
 				$prop
 				);
@@ -394,9 +410,9 @@ abstract class Advanced_Term_Fields {
 	/**
 	 * Registers term meta, key, and callbacks
 	 *
-	 * @uses WordPress\Meta register_meta()
-	 * 
 	 * @see https://codex.wordpress.org/Function_Reference/register_meta
+	 *
+	 * @uses WordPress\Meta register_meta()
 	 *
 	 * @access public
 	 *
@@ -414,13 +430,13 @@ abstract class Advanced_Term_Fields {
 		);
 	}
 
-	
+
 	/**
 	 * Sanitizes meta key value
 	 *
 	 * A function or method to call when sanitizing the value of a meta key.
 	 * Used with "sanitize_{$meta_type}_meta_{$meta_key}" filter
-	 * 
+	 *
 	 * @see https://codex.wordpress.org/Function_Reference/register_meta
 	 *
 	 * @access public
@@ -436,26 +452,26 @@ abstract class Advanced_Term_Fields {
 		return $data;
 	}
 
-	
+
 	/**
 	 * Checks capability for meta process
 	 *
-	 * A function or method to call when performing edit_post_meta, 
-	 * add_post_meta, and delete_post_meta capability checks. 
+	 * A function or method to call when performing edit_post_meta,
+	 * add_post_meta, and delete_post_meta capability checks.
 	 * Used with "auth_{$meta_type}_meta_{$meta_key}" filter.
-	 * 
+	 *
 	 * @see https://codex.wordpress.org/Function_Reference/register_meta
 	 *
 	 * @access public
 	 *
 	 * @since 0.1.0
 	 *
-	 * @param  bool    $allowed  Is the user allowed to make the change.
-	 * @param  string  $meta_key The meta key.
-	 * @param  int     $post_id  The post ojbect ID.
-	 * @param  int     $user_id  The user ID.
-	 * @param  string  $cap      The meta capability.
-	 * @param  array   $caps     An array of capabilities.
+	 * @param bool   $allowed  Is the user allowed to make the change.
+	 * @param string $meta_key The meta key.
+	 * @param int    $post_id  The post ojbect ID.
+	 * @param int    $user_id  The user ID.
+	 * @param string $cap      The meta capability.
+	 * @param array  $caps     An array of capabilities.
 	 *
 	 * @return boolean True if allowed to view the meta field by default, false if else.
 	 */
@@ -468,52 +484,95 @@ abstract class Advanced_Term_Fields {
 	}
 
 
-	public function show_custom_column( $hooked_taxonomies = array() )
+	/**
+	 * Displays meta column in the terms list table
+	 *
+	 * Called by inheriting classes on init() to display column in the terms list table.
+	 * Hooks onto:
+	 * - "manage_{$this->screen->taxonomy}_columns" filter
+	 * - "manage_{$this->screen->taxonomy}_custom_column" filter
+	 * - "manage_{$this->screen->taxonomy}_sortable_columns" filter
+	 *
+	 * @see WP_Terms_List_Table::column_default()
+	 * @see get_column_headers() in wp-admin/includes/template.php
+	 * @see get_column_info() in wp-admin/includes/class-wp-list-table.php
+	 *
+	 * @uses Advanced_Term_Fields::$show_custom_column to check if column should be shown.
+	 *
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param array $allowed_taxonomies The taxonomies to display the column on.
+	 *
+	 * @return array $allowed_taxonomies The allowed taxonomies.
+	 */
+	public function show_custom_column( $allowed_taxonomies = array() )
 	{
 		if( ! $this->show_custom_column ) {
 			return;
 		}
 
-		if ( ! empty( $hooked_taxonomies ) ) :
-			foreach ( $hooked_taxonomies as $tax_name ) {
+		if ( ! empty( $allowed_taxonomies ) ) :
+			foreach ( $allowed_taxonomies as $tax_name ) {
 				add_filter( "manage_edit-{$tax_name}_columns", array( $this, 'add_column_header' ) );
 				add_filter( "manage_{$tax_name}_custom_column", array( $this, 'add_column_value' ), 10, 3 );
 				add_filter( "manage_edit-{$tax_name}_sortable_columns", array( $this, 'sortable_columns' ) );
 			}
 		endif;
 
-		return $hooked_taxonomies;
+		return $allowed_taxonomies;
 	}
 
 
-	public function show_custom_fields( $hooked_taxonomies = array() )
-	{
-		if( ! $this->show_fields ) {
-			return;
-		}
-
-		if ( ! empty( $hooked_taxonomies ) ) :
-			foreach ( $hooked_taxonomies as $tax_name ) {
-				add_action( "{$tax_name}_add_form_fields", array( $this, 'add_form_field' ) );
-				add_action( "{$tax_name}_edit_form_fields", array( $this, 'edit_form_field' ) );
-			}
-		endif;
-
-		return $hooked_taxonomies;
-	}
-
-
+	/** 
+	 * Adds custom column to list table column array
+	 *
+	 * @see Advanced_Term_Fields::show_custom_column()
+	 * 
+	 * @uses Advanced_Term_Fields::$custom_column_name
+	 * @uses Advanced_Term_Fields::$labels
+	 *
+	 * 
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param array $columns An array of column names to be displayed.
+	 *
+	 * @return array $columns The column names of the terms list table.
+	 */
 	public function add_column_header( $columns = array() )
 	{
 		$columns[$this->custom_column_name] = $this->labels['singular'];
 
 		return $columns;
 	}
-
-
-	public function add_column_value( $empty = '', $custom_column = '', $term_id = 0 )
+	
+	
+	/** 
+	 * Displays custom meta value in the terms list table
+	 *
+	 * @see Advanced_Term_Fields::show_custom_column()
+	 * 
+	 * @uses Advanced_Term_Fields::$custom_column_name
+	 * @uses Advanced_Term_Fields::custom_column_output()
+	 * @uses Advanced_Term_Fields::$no_meta_value
+	 * @uses Advanced_Term_Fields::get_meta()	 
+	 *
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param string $empty       Blank string.
+	 * @param string $column_name Name of the column.
+	 * @param int    $term_id     Term ID.
+	 *
+	 * @return array $columns The column names.
+	 */
+	public function add_column_value( $empty = '', $column_name = '', $term_id = 0 )
 	{
-		if ( empty( $_REQUEST['taxonomy'] ) || ( $this->custom_column_name !== $custom_column ) || ! empty( $empty ) ) {
+		if ( empty( $_REQUEST['taxonomy'] ) || ( $this->custom_column_name !== $column_name ) || ! empty( $empty ) ) {
 			return;
 		}
 
@@ -525,48 +584,229 @@ abstract class Advanced_Term_Fields {
 		}
 
 		echo $return_value;
-	}
+	}	
+	
+	
+	/**
+	 * Displays meta value in custom column
+	 *
+	 * @see Advanced_Term_Fields::add_column_value()
+	 *
+	 * @access protected
+	 *
+     * @since 0.1.0
+     * 	 
+	 * @param string $meta_value The stored meta value to be displayed.
+	 */
+	public function custom_column_output( $meta_value ) {}
 
-
-	public function custom_column_output( $meta_value ){}
-
-
+	
+	/** 
+	 * Sets custom column sortable
+	 *
+	 * @see Advanced_Term_Fields::show_custom_column()
+	 * @see wp-admin/includes/class-wp-list-table.php
+	 * 
+	 * @uses Advanced_Term_Fields::$custom_column_name
+	 * @uses Advanced_Term_Fields::$meta_key
+	 *
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param array $sortable_columns An array of sortable columns.
+	 *
+	 * @return array $columns The column names.
+	 */
 	public function sortable_columns( $columns = array() )
 	{
 		$columns[$this->custom_column_name] = $this->meta_key;
 
 		return $columns;
 	}
+	
+	
+	/**
+	 * Displays form fields on term admin pages
+	 *
+	 * Called by inheriting classes on init() to display form fields.
+	 *
+	 * @see wp-admin/edit-tags.php
+	 * @see wp-admin/edit-tag-form.php
+	 *
+	 * @uses Advanced_Term_Fields::$show_custom_fields to check if field should be shown.
+	 *
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param array $allowed_taxonomies The taxonomies to display the field on.
+	 *
+	 * @return array $allowed_taxonomies The allowed taxonomies.
+	 */
+	public function show_custom_fields( $allowed_taxonomies = array() )
+	{
+		if( ! $this->show_custom_fields ) {
+			return;
+		}
+
+		if ( ! empty( $allowed_taxonomies ) ) :
+			foreach ( $allowed_taxonomies as $tax_name ) {
+				add_action( "{$tax_name}_add_form_fields", array( $this, 'add_form_field' ) );
+				add_action( "{$tax_name}_edit_form_fields", array( $this, 'edit_form_field'), 10, 2 );				
+				add_action( 'quick_edit_custom_box', array( $this, 'quick_edit_form_field' ), 10, 3 );
+			}
+		endif;
+		
+		
+
+		return $allowed_taxonomies;
+	}
 
 
-	public function add_form_field(){}
+	/**
+	 * Displays form field on Add Term form
+	 *
+	 * @see Advanced_Term_Fields::show_custom_fields()
+     *
+	 * @uses Advanced_Term_Fields::$basename
+	 * @uses Advanced_Term_Fields::$meta_key
+	 * @uses Advanced_Term_Fields::$file
+	 * @uses WordPress wp_nonce_field() To build nonce for form field.
+	 *
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param string $taxonomy Current taxonomy slug.
+	 *
+	 * @return null
+	 */
+	public function add_form_field( $taxonomy ){}
+
+	
+	/**
+	 * Displays form field on Edit Term form
+	 *
+	 * @see Advanced_Term_Fields::show_custom_fields()
+     *
+	 * @uses Advanced_Term_Fields::$basename
+	 * @uses Advanced_Term_Fields::$meta_key
+	 * @uses Advanced_Term_Fields::$file
+	 * @uses WordPress wp_nonce_field() To build nonce for form field.
+	 *
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param string $taxonomy Current taxonomy slug.
+	 *
+	 * @return null
+	 */
+	public function edit_form_field( $term, $taxonomy ){}
+	
+	
+	/**
+	 * Displays form field on Quick Edit Term form
+	 *
+	 * @see Advanced_Term_Fields::show_custom_fields()
+	 *
+	 * @uses Advanced_Term_Fields::$custom_column_name
+	 * @uses Advanced_Term_Fields::$basename
+	 * @uses Advanced_Term_Fields::$meta_key
+	 * @uses Advanced_Term_Fields::$file
+	 * @uses WordPress wp_nonce_field() To build nonce for form field.
+	 * 
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param string $column_name Name of the column to edit.
+	 * @param string $screen      The screen name.
+	 * @param string $taxonomy    Current taxonomy slug.
+	 *
+	 * @return null
+	 */
+	public function quick_edit_form_field( $column_name, $screen, $taxonomy )
+	{
+		if( $this->custom_column_name !== $column_name ) {
+			return;
+		}
+	}
 
 
-	public function edit_form_field(){}
-
-
+	/**
+	 * Retrieves the stored value
+	 *
+	 * @see https://developer.wordpress.org/reference/functions/get_term_meta/
+	 * 
+	 * @uses WordPress get_term_meta()
+	 * 
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param int $term_id Term ID.
+	 */
 	public function get_meta( $term_id = 0 )
 	{
 		return get_term_meta( $term_id, $this->meta_key, true );
 	}
 
 
+	/**
+	 * Returns the database key for the meta key version
+	 * 
+	 * @uses Advanced_Term_Fields::$meta_key
+	 * 
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return string Version key.
+	 */
 	public function get_db_version_key()
 	{
-		return "advanced_term_meta_fields_{$this->data_type}s_version";
+		return "advanced_term_meta_fields_{$this->meta_key}_version";
 	}
 
 
-	public function get_taxonomies( $args = array(), $meta_key = '' )
+	
+	/**
+	 * Returns taxonomies used meta key
+	 *
+	 * @see https://codex.wordpress.org/Function_Reference/get_taxonomies
+	 *
+	 * @uses WordPress wp_parse_args()
+	 * @uses WordPress get_taxonomies()
+	 *
+	 * @since 0.1.0
+	 * 
+	 * @return array $allowed_taxonomies Filtered array of taxonomies.
+	 */
+	public function get_taxonomies()
 	{
-		return Adv_Term_Fields_Utils::get_taxonomies( $args = array(), $this->meta_key );
+		$defaults = apply_filters( "advanced_term_fields_get_taxonomies_args", array( 'show_ui' => true ) );
+		$defaults = apply_filters( "advanced_term_fields_{$this->meta_key}_get_taxonomies_args", $defaults );
+
+		$allowed_taxonomies = get_taxonomies( $defaults );
+
+		return apply_filters('advanced_term_fields_allowed_taxonomies', $allowed_taxonomies);
 	}
 
 
 	/**
-	 * Build column name for meta field
+	 * Builds column name for meta field
 	 *
 	 * Note: Relying on $meta_key alone throws an error with 'dashicons-picker' script
+	 * 
+	 * @uses Advanced_Term_Fields::$meta_key
+	 * 
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return string Column name.
 	 */
 	public function get_custom_column_name()
 	{
@@ -574,15 +814,39 @@ abstract class Advanced_Term_Fields {
 	}
 
 
+	/**
+	 * Loads various admin functions
+	 * 
+	 * - Checks for version update.
+	 * - Loads js/css scripts
+	 * 
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 * 
+	 * @return void
+	 */
 	public function load_admin_functions()
 	{
 		add_action( 'admin_init', array( $this, 'upgrade_check' ) );
-		add_action( 'load-edit-tags.php', array( $this, 'load_admin_hooks'  ) );
 		add_action( 'load-edit-tags.php', array( $this, 'load_admin_scripts'  ) );
 	}
 
-
-	public function maybe_upgrade_version()
+	
+	/**
+	 * Loads various admin functions
+	 * 
+	 * @uses Advanced_Term_Fields::$db_version_key
+	 * @uses version_compare()
+	 * @uses WordPress update_option()
+	 * 
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 * 
+	 * @return void
+	 */
+	public function upgrade_check()
 	{
 		$stored_version = get_option( $this->db_version_key );
 
@@ -591,32 +855,50 @@ abstract class Advanced_Term_Fields {
 		}
 	}
 
-
-	public function upgrade_check()
-	{
-		$this->maybe_upgrade_version();
-	}
-
-
-	public function load_admin_hooks()
-	{
-		add_action( 'quick_edit_custom_box', array( $this, 'quick_edit_form_field' ), 10, 3 );
-	}
-
-
-	public function quick_edit_form_field(){}
-
-
+	
+	/**
+	 * Loads js/css admin scripts
+	 *  
+	 * Note: Only loads js/css on edit-tags.php
+	 * 
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 * 
+	 * @return void
+	 */
 	public function load_admin_scripts()
 	{
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
 		add_action( 'admin_head', array( $this, 'admin_head_styles' ) );
 	}
 
-
+	
+	/**
+	 * Loads js admin scripts
+	 *  
+	 * Note: Only loads on edit-tags.php
+	 * 
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 * 
+	 * @return void
+	 */
 	public function enqueue_admin_scripts( $hook ){}
 
-
+	
+	/**
+	 * Prints out css styles in admin head
+	 *  
+	 * Note: Only loads on edit-tags.php
+	 * 
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 * 
+	 * @return void
+	 */
 	public function admin_head_styles(){}
 
 
@@ -656,7 +938,6 @@ abstract class Advanced_Term_Fields {
 	public function filter_terms_query()
 	{
 		add_filter( 'get_terms_args', array($this, 'filter_terms_args'), 10, 2 );
-
 		add_filter( 'terms_clauses', array($this, 'filter_terms_clauses'), 10, 3 );
 	}
 
@@ -722,7 +1003,7 @@ abstract class Advanced_Term_Fields {
 
 
 	/**
-	 * Filter terms listing in WP_Terms_List_Table table on edit-tags.php
+	 * Filter terms listing in the terms list table table on edit-tags.php
 	 *
 	 * Adds the meta_query argument which tells WP to fire a new WP_Meta_Query() instance.
 	 * This handles all the custom SQL queries needed to sort by meta value.

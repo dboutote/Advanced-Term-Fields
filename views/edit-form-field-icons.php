@@ -22,16 +22,16 @@
 
 	<td>
 		<?php
+		$meta_value = $this->get_meta( $term->term_id );
 		$icon = sprintf(
-			'<i data-%1$s="%2$s" class="term-%1$s dashicons %2$s"></i>',
-			$this->data_type,
-			esc_attr( $this->get_meta( $term->term_id ) )
+			'<i data-icon="%1$s" class="term-icon dashicons %1$s"></i>',
+			esc_attr( $meta_value )
 			);
 		?>
 		<div id="wp-tt-icon-meta-wrap" class="icon-meta-wrap">
 			<div class="icon-utils">
 				<div class="icon-img"><?php echo $icon;?></div>
-				<input name="<?php echo esc_attr( $this->meta_key ); ?>" id="<?php echo esc_attr( $this->meta_key ); ?>" type="text" value="<?php echo $this->get_meta( $term->term_id ); ?>" size="20" />
+				<input name="<?php echo esc_attr( $this->meta_key ); ?>" id="<?php echo esc_attr( $this->meta_key ); ?>" type="text" value="<?php echo esc_attr( $meta_value ); ?>" size="20" />
 				<input type="button" data-target="#<?php echo esc_attr( $this->meta_key ); ?>" class="button dashicons-picker" value="<?php esc_html_e( 'Choose Icon', 'wp-term-toolbox' ); ?> " />
 			</div>
 

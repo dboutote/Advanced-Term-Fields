@@ -87,4 +87,4 @@ function _adv_term_fields_init_images(){
 	$Adv_Term_Fields_Images = new Adv_Term_Fields_Images( __FILE__ );
 	$Adv_Term_Fields_Images->init();
 }
-//add_action( 'init', '_adv_term_fields_init_images', 99 );
+add_action( 'init', '_adv_term_fields_init_images', 99 );

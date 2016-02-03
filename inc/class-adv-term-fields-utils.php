@@ -72,27 +72,4 @@ class Adv_Term_Fields_Utils {
 		return false;
 	}
 
-
-	/**
-	 * Returns taxonomies used by this plugin
-	 *
-	 * @since 0.1.0
-	 *
-	 * @param array $args
-	 * @param $meta_key The meta key for the meta function making the request
-	 * 
-	 * @return array
-	 */
-	static function get_taxonomies( $args = array() , $meta_key = '' ) {
-
-		$defaults = apply_filters( "advanced_term_fields_get_taxonomies_args", array( 'show_ui' => true ) );
-		$defaults = apply_filters( "advanced_term_fields_{$meta_key}_get_taxonomies_args", $defaults );
-
-		$r = wp_parse_args( $args, $defaults );
-
-		$hooked_taxonomies = get_taxonomies( $r );
-
-		return apply_filters('advanced_term_fields_taxonomies', $hooked_taxonomies);
-	}
-
 }

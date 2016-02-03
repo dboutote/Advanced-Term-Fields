@@ -25,10 +25,9 @@ function wp_term_term_image_get_taxonomies_args($args){
 
 function sanitize_term_meta_term_icon( $meta_value, $meta_key ){	
 	return $meta_value;
-	
 }
 
-add_filter( "sanitize_term_meta_term_icon", 'sanitize_term_meta_term_icon', 10, 2 );
+//add_filter( "sanitize_term_meta_term_icon", 'sanitize_term_meta_term_icon', 10, 2 );
 
 
 
@@ -37,3 +36,17 @@ function wp_tt_allowed_orderby_keys( $keys, $meta_key ){
 	return $keys;
 }
 #add_filter( "wp_tt_allowed_orderby_keys", 'wp_tt_allowed_orderby_keys', 10, 2 );
+
+
+
+function tax_bork($args){
+	$args['_builtin'] = false;
+	return $args;
+}
+#add_filter( "advanced_term_fields_get_taxonomies_args", 'tax_bork' );
+
+function tax_img_bork($args){
+	$args['_builtin'] = true;
+	return $args;
+}
+#add_filter( "advanced_term_fields_thumbnail_id_get_taxonomies_args", 'tax_img_bork');

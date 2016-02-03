@@ -6,7 +6,7 @@
     }
 
     function reset_thumbnail_id(parent) {
-        $(':input[name="' + i10n_ATMFImages.meta_key + '"]', parent).val('');
+        $(':input[name="' + l10n_ATF_Images.meta_key + '"]', parent).val('');
     }
 
     function remove_selected_thumb(el, parent) {
@@ -96,7 +96,7 @@
                 set_link.removeClass('button').html(img_html).after(del_link);
 
                 // set the meta value
-                $(':input[name="' + i10n_ATMFImages.meta_key + '"]', set_link_parent).val(image.id);
+                $(':input[name="' + l10n_ATF_Images.meta_key + '"]', set_link_parent).val(image.id);
 
             }
         });
@@ -146,7 +146,7 @@
     $('#the-list').on('click', '.editinline', function (e) {
         e.preventDefault();
         var tr_id = $(e.currentTarget).parents('tr').attr('id');
-        var target_img = $('td.' + i10n_ATMFImages.custom_column_name + ' img', '#' + tr_id);
+        var target_img = $('td.' + l10n_ATF_Images.custom_column_name + ' img', '#' + tr_id);
         var img_id;
         var img_src;
         var sl = $('.set-term-thumbnail', '.inline-edit-row');
@@ -177,7 +177,7 @@
             clear_delete_link(sl_parent);
         }
 
-        $(':input[name="' + i10n_ATMFImages.meta_key + '"]', '.inline-edit-row').val(img_id);
+        $(':input[name="' + l10n_ATF_Images.meta_key + '"]', '.inline-edit-row').val(img_id);
     });
 
 
