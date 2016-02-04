@@ -27,11 +27,9 @@ Use it for tags, categories, and custom taxonomies.
 This is a parent framework, meant to be extended by child classes.  See any one of the following 
 for examples:
 
-* 
-* 
-* 
+* [Advanced Term Fields: Colors] (https://github.com/dboutote/Advanced-Term-Fields-Colors) 
 
-# Frequently Asked Questions
+# FAQ
 
 ### Where can I find additional additional documentation?
 
