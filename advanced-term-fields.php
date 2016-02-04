@@ -9,7 +9,7 @@
  *
  * Plugin Name: Advanced Term Fields
  * Plugin URI:  http://darrinb.com/plugins/advanced-term-fields
- * Description: Easily add/manage custom meta fields for categories, tags, and custom taxonomies.
+ * Description: A framework for managing custom meta fields for categories, tags, and custom taxonomies.
  * Version:     0.1.0
  * Author:      Darrin Boutote
  * Author URI:  http://darrinb.com

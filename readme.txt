@@ -7,15 +7,13 @@ Stable tag: 0.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Advanced Term Fields is custom meta fields for terms, built the WordPress way.
+A framework for managing custom meta fields for categories, tags, and custom taxonomies.
 
 == Description ==
 
-Easily add/manage custom meta fields for categories, tags, and custom taxonomies.
+With the launch of version 4.4, WordPress added metadata capabilities for taxonomy terms.  Advanced Term Fields leverages this new capability by providing developers an easy-to-use, yet powerful framework for adding custom meta fields to taxonomy terms.
 
-With the launch of 4.4 WordPress added metadata capabilities for taxonomy terms.  Advanced Term Fields leverages this new capability by providing developers an easy-to-use, yet powerful framework for adding custom meta fields to taxonomy terms.
-
-Through the use of hooks and filters, it's completely customizable for your project requirements, while also providing a standardized way of building a term meta UI.
+Through the use of hooks and filters, it's completely customizable for your project requirements, while also providing a standardized way of building a UI for managing term metadata.
 
 Use it for tags, categories, even custom taxonomies!
 
@@ -23,7 +21,7 @@ Use it for tags, categories, even custom taxonomies!
 
 This is a parent framework, meant to be extended by child classes.  See any one of the following for examples:
 
-* [Advanced Term Fields: Colors](https://github.com/dboutote/Advanced-Term-Fields-Colors) Easily assign colors for categories, tags, and custom taxonomy terms. 
+* [Advanced Term Fields: Colors](https://github.com/dboutote/Advanced-Term-Fields-Colors) Easily assign colors for categories, tags, and custom taxonomy terms.
 
 
 == Installation ==
