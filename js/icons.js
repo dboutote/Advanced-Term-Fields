@@ -10,13 +10,13 @@
 
     $('.icon-utils #term_icon').on('change', function () {
         var dashicon_chosen = $(this).val();
-        $('#wp-tt-icon-meta-wrap i.term-icon').removeClass(function (index, css) {
+        $('#atf-icon-meta-wrap i.term-icon').removeClass(function (index, css) {
             return (css.match(/\bdashicons-\S+/g) || []).join(' ');
         }).attr('data-icon', dashicon_chosen).addClass(dashicon_chosen);
     });
 
-    $('.icon-img', '#wp-tt-icon-meta-wrap').on('click', function () {
-        $('#wp-tt-icon-meta-wrap').find('.dashicons-picker').trigger('click');
+    $('.icon-img', '#atf-icon-meta-wrap').on('click', function () {
+        $('#atf-icon-meta-wrap').find('.dashicons-picker').trigger('click');
     });
 
 })(jQuery);

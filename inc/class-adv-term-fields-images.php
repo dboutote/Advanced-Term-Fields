@@ -105,6 +105,7 @@ final class Adv_Term_Fields_Images extends Advanced_Term_Fields {
 		$this->load_admin_functions();
 		$this->process_term_meta();
 		$this->filter_terms_query();
+		$this->show_inner_fields();
 	}
 
 
@@ -120,7 +121,7 @@ final class Adv_Term_Fields_Images extends Advanced_Term_Fields {
 	public function set_labels()
 	{
 		$this->labels = array(
-			'singular'	=> esc_html__( 'Image',  'adv-term-fields' ),
+			'singular'	  => esc_html__( 'Image',  'adv-term-fields' ),
 			'plural'	  => esc_html__( 'Images', 'adv-term-fields' ),
 			'description' => esc_html__( 'Set a featured image for this term.', 'adv-term-fields' )
 		);
@@ -178,7 +179,7 @@ final class Adv_Term_Fields_Images extends Advanced_Term_Fields {
 	public function admin_head_styles()
 	{
 		ob_start();
-		include dirname( $this->file ) . '/css/admin-head-feat-image.php';
+		include dirname( $this->file ) . '/css/admin-head-feat-image.css';
 		$css = ob_get_contents();
 		ob_end_clean();
 
@@ -215,7 +216,6 @@ final class Adv_Term_Fields_Images extends Advanced_Term_Fields {
 
 		endif;
 
-
 		return $output;
 	}
 
@@ -226,10 +226,7 @@ final class Adv_Term_Fields_Images extends Advanced_Term_Fields {
 	 *
 	 * @see Advanced_Term_Fields::show_custom_fields()
 	 *
-	 * @uses Advanced_Term_Fields::$basename
-	 * @uses Advanced_Term_Fields::$meta_key
 	 * @uses Advanced_Term_Fields::$file
-	 * @uses WordPress wp_nonce_field() To build nonce for form field.
 	 *
 	 * @access public
 	 *
@@ -237,12 +234,11 @@ final class Adv_Term_Fields_Images extends Advanced_Term_Fields {
 	 *
 	 * @param string $taxonomy Current taxonomy slug.
 	 *
-	 * @return null
+	 * @return void
 	 */
-	public function add_form_field( $taxonomy )
+	public function show_inner_field_add( $taxonomy = '' )
 	{
 		ob_start();
-		wp_nonce_field( $this->basename , "{$this->meta_key}_nonce");
 		include dirname( $this->file ) . '/views/add-form-field-images.php';
 		$field = ob_get_contents();
 		ob_end_clean();
@@ -257,23 +253,20 @@ final class Adv_Term_Fields_Images extends Advanced_Term_Fields {
 	 *
 	 * @see Advanced_Term_Fields::show_custom_fields()
 	 *
-	 * @uses Advanced_Term_Fields::$basename
-	 * @uses Advanced_Term_Fields::$meta_key
 	 * @uses Advanced_Term_Fields::$file
-	 * @uses WordPress wp_nonce_field() To build nonce for form field.
 	 *
 	 * @access public
 	 *
 	 * @since 0.1.0
 	 *
+	 * @param object $term Term object.
 	 * @param string $taxonomy Current taxonomy slug.
 	 *
-	 * @return null
+	 * @return void
 	 */
-	public function edit_form_field( $term = false, $taxonomy = '' )
+	public function show_inner_field_edit( $term = false, $taxonomy = '' )
 	{
 		ob_start();
-		wp_nonce_field( $this->basename , "{$this->meta_key}_nonce");
 		include dirname( $this->file ) . '/views/edit-form-field-images.php';
 		$field = ob_get_contents();
 		ob_end_clean();

@@ -1,8 +1,7 @@
 <style type="text/css">
-	.column-<?php echo $this->custom_column_name; ?> {
-		width: 65px;
-	}
-	.term-<?php echo $this->data_type; ?> {
+	.column-col-term_icon { width: 65px; }
+	
+	.term-icon {
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 		font-family: dashicons;
@@ -15,9 +14,7 @@
 		width: 25px;
 	}
 	
-	.icon-meta-wrap {
-		position: relative;
-	}
+	.icon-meta-wrap { position: relative; }
 	
 	.icon-img {
 		background: #fff none repeat scroll 0 0;
@@ -29,7 +26,6 @@
 		padding: 10px;
 		text-align: center;
 		width: 57px;
-		
 	}
 	
 	.icon-img .term-icon {
@@ -39,14 +35,6 @@
 		margin: 0;
 		width: 48px;
 	}
-	.icon-utils {}
 	
-	.icon-meta-wrap .description {
-		clear: both;
-	}
-	
-	.icon-utils #term_icon {
-		margin-bottom: 5px;
-	}
-	
+	.icon-utils #term_icon { margin-bottom: 5px; }
 </style>

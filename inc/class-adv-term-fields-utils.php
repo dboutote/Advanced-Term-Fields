@@ -17,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
+
 /**
  * Adv_Term_Fields_Utils Class
  *
@@ -27,6 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 0.1.0
  */
 class Adv_Term_Fields_Utils {
+
 
 	/**
 	 * Name of plugin

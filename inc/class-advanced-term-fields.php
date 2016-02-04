@@ -662,6 +662,18 @@ abstract class Advanced_Term_Fields {
 
 		return $allowed_taxonomies;
 	}
+	
+	
+	public function show_inner_fields()
+	{
+		if( ! $this->show_custom_fields ) {
+			return;
+		}
+		
+		add_action( "adv_term_fields_add_form_field_{$this->meta_key}", array($this, 'show_inner_field_add') );
+		add_action( "adv_term_fields_edit_form_field_{$this->meta_key}", array($this, 'show_inner_field_edit') );
+		add_action( "adv_term_fields_qedit_form_field_{$this->meta_key}", array($this, 'how_inner_field_qedit') );
+	}
 
 
 	/**
@@ -680,9 +692,17 @@ abstract class Advanced_Term_Fields {
 	 *
 	 * @param string $taxonomy Current taxonomy slug.
 	 *
-	 * @return null
+	 * @return void
 	 */
-	public function add_form_field( $taxonomy ){}
+	public function add_form_field( $taxonomy )
+	{
+		ob_start();		
+		include dirname( $this->file ) . '/views/add-form-field.php';
+		$field = ob_get_contents();
+		ob_end_clean();
+
+		echo $field;
+	}
 
 
 	/**
@@ -699,11 +719,20 @@ abstract class Advanced_Term_Fields {
 	 *
 	 * @since 0.1.0
 	 *
+	 * @param object $term Term object.
 	 * @param string $taxonomy Current taxonomy slug.
 	 *
-	 * @return null
+	 * @return void
 	 */
-	public function edit_form_field( $term, $taxonomy ){}
+	public function edit_form_field( $term, $taxonomy )
+	{
+		ob_start();		
+		include dirname( $this->file ) . '/views/edit-form-field.php';
+		$field = ob_get_contents();
+		ob_end_clean();
+
+		echo $field;
+	}	
 
 
 	/**
