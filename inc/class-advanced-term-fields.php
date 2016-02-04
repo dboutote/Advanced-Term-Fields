@@ -32,7 +32,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 0.1.0
  */
-abstract class Advanced_Term_Fields {
+abstract class Advanced_Term_Fields
+{
 
 	/**
 	 * Version number
@@ -267,14 +268,14 @@ abstract class Advanced_Term_Fields {
 	 */
 	public function __construct( $file = '' )
 	{
-		$this->file	  = $file;
-		$this->url	   = plugin_dir_url( $this->file );
-		$this->path	  = plugin_dir_path( $this->file );
-		$this->basename  = plugin_basename( $this->file );
+		$this->file	    = $file;
+		$this->url	    = plugin_dir_url( $this->file );
+		$this->path	    = plugin_dir_path( $this->file );
+		$this->basename = plugin_basename( $this->file );
 
 		$this->set_labels();
 
-		$this->allowed_orderby_keys  = $this->get_allowed_orderby_keys();
+		$this->allowed_orderby_keys = $this->get_allowed_orderby_keys();
 		$this->custom_column_name	= $this->get_custom_column_name();
 		$this->allowed_taxonomies	= $this->get_taxonomies();
 		$this->db_version_key		= $this->get_db_version_key();
@@ -294,17 +295,20 @@ abstract class Advanced_Term_Fields {
 	 * @access private
 	 *
 	 * @since 0.1.0
+	 *
+	 * @return void
 	 */
 	private function _check_required_props()
 	{
 		foreach ( $this->_required_props  as $prop ) {
 			try {
-
 				$this->_check_required( $prop );
-
 			} catch (Exception $e) {
 
+				// exception message
 				$e_msg = $e->getMessage();
+
+				// message referencing parent plugin
 				$parent_msg = '<b>' . Adv_Term_Fields_Utils::$plugin_name . '</b> requires all inheriting classes set this property.';
 
 				// Which child plugin is causing the issue?
@@ -313,6 +317,7 @@ abstract class Advanced_Term_Fields {
 				$child_plugin_name = ( ! empty($child_plugin_data['Name']) ) ? esc_html( $child_plugin_data['Name'] ) : '';
 				$child_msg = 'Unable to activate <b>' . $child_plugin_name . '</b>.';
 
+				// displayed message
 				$display_msg = sprintf(
 					'<div class="error"><p><b>Error:</b> %1$s %2$s %3$s</p></div>',
 					$e_msg,
@@ -328,9 +333,7 @@ abstract class Advanced_Term_Fields {
 				// let the user know
 				add_action('admin_notices', function() use ( $display_msg ) {
 					echo $display_msg;
-
 				});
-
 			}
 		}
 	}
@@ -338,6 +341,8 @@ abstract class Advanced_Term_Fields {
 
 	/**
 	 * Checks if a required class property is set
+	 *
+	 * Filters/trims property before checking
 	 *
 	 * @see Advanced_Term_Fields::$_required_props
 	 * @see Advanced_Term_Fields::_check_required_props()
@@ -354,7 +359,6 @@ abstract class Advanced_Term_Fields {
 	 */
 	private function _check_required( $prop )
 	{
-		// clean arrays, check for empty values
 		$cleaned_prop = ( is_array( $this->$prop ) ) ? array_filter( $this->$prop ) : trim( $this->$prop );
 
 		if( empty( $cleaned_prop ) || is_null( $cleaned_prop ) ){
@@ -378,6 +382,8 @@ abstract class Advanced_Term_Fields {
 	 * @access protected
 	 *
 	 * @since 0.1.0
+	 *
+	 * @return void
 	 */
 	abstract protected function set_labels();
 
@@ -403,6 +409,7 @@ abstract class Advanced_Term_Fields {
 			'meta_value',
 			'meta_value_num'
 			);
+
 		return apply_filters ( 'advanced_term_fields_allowed_orderby_keys', $keys, $this->meta_key );
 	}
 
@@ -468,10 +475,10 @@ abstract class Advanced_Term_Fields {
 	 *
 	 * @param bool   $allowed  Is the user allowed to make the change.
 	 * @param string $meta_key The meta key.
-	 * @param int	$post_id  The post ojbect ID.
-	 * @param int	$user_id  The user ID.
-	 * @param string $cap	  The meta capability.
-	 * @param array  $caps	 An array of capabilities.
+	 * @param int	 $post_id  The post ojbect ID.
+	 * @param int	 $user_id  The user ID.
+	 * @param string $cap	   The meta capability.
+	 * @param array  $caps	   An array of capabilities.
 	 *
 	 * @return boolean True if allowed to view the meta field by default, false if else.
 	 */
@@ -533,7 +540,6 @@ abstract class Advanced_Term_Fields {
 	 * @uses Advanced_Term_Fields::$custom_column_name
 	 * @uses Advanced_Term_Fields::$labels
 	 *
-	 *
 	 * @access public
 	 *
 	 * @since 0.1.0
@@ -544,7 +550,7 @@ abstract class Advanced_Term_Fields {
 	 */
 	public function add_column_header( $columns = array() )
 	{
-		$columns[$this->custom_column_name] = $this->labels['singular'];
+		$columns[ $this->custom_column_name ] = $this->labels['singular'];
 
 		return $columns;
 	}
@@ -564,9 +570,9 @@ abstract class Advanced_Term_Fields {
 	 *
 	 * @since 0.1.0
 	 *
-	 * @param string $empty	   Blank string.
+	 * @param string $empty	      Blank string.
 	 * @param string $column_name Name of the column.
-	 * @param int	$term_id	 Term ID.
+	 * @param int	 $term_id	  Term ID.
 	 *
 	 * @return array $columns The column names.
 	 */
@@ -590,6 +596,8 @@ abstract class Advanced_Term_Fields {
 	/**
 	 * Displays meta value in custom column
 	 *
+	 * Called by inheriting classes on init() to display meta value in column in terms list table.
+	 *
 	 * @see Advanced_Term_Fields::add_column_value()
 	 *
 	 * @access protected
@@ -597,6 +605,8 @@ abstract class Advanced_Term_Fields {
 	 * @since 0.1.0
 	 *
 	 * @param string $meta_value The stored meta value to be displayed.
+	 *
+	 * @return string $var The displayed meta value.
 	 */
 	public function custom_column_output( $meta_value ) {}
 
@@ -620,7 +630,7 @@ abstract class Advanced_Term_Fields {
 	 */
 	public function sortable_columns( $columns = array() )
 	{
-		$columns[$this->custom_column_name] = $this->meta_key;
+		$columns[ $this->custom_column_name ] = $this->meta_key;
 
 		return $columns;
 	}
@@ -634,7 +644,7 @@ abstract class Advanced_Term_Fields {
 	 * @see wp-admin/edit-tags.php
 	 * @see wp-admin/edit-tag-form.php
 	 *
-	 * @uses Advanced_Term_Fields::$show_custom_fields to check if field should be shown.
+	 * @uses Advanced_Term_Fields::$show_custom_fields To check if field should be shown.
 	 *
 	 * @access public
 	 *
@@ -662,29 +672,46 @@ abstract class Advanced_Term_Fields {
 
 		return $allowed_taxonomies;
 	}
-	
-	
+
+
+	/**
+	 * Displays inner form fields on term admin pages
+	 *
+	 * Called by inheriting classes on init() to display form fields inside form field wrappers.
+	 *
+	 * @see Advanced_Term_Fields::add_form_field()
+	 * @see Advanced_Term_Fields::edit_form_field()
+	 * @see Advanced_Term_Fields::quick_edit_form_field()
+	 *
+	 * @uses Advanced_Term_Fields::$show_custom_fields To check if field should be shown.
+	 *
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return void
+	 */
 	public function show_inner_fields()
 	{
 		if( ! $this->show_custom_fields ) {
 			return;
 		}
-		
-		add_action( "adv_term_fields_add_form_field_{$this->meta_key}", array($this, 'show_inner_field_add') );
-		add_action( "adv_term_fields_edit_form_field_{$this->meta_key}", array($this, 'show_inner_field_edit') );
-		add_action( "adv_term_fields_qedit_form_field_{$this->meta_key}", array($this, 'how_inner_field_qedit') );
+
+		add_action( "adv_term_fields_show_inner_field_add_{$this->meta_key}", array($this, 'show_inner_field_add') );
+		add_action( "adv_term_fields_show_inner_field_edit_{$this->meta_key}", array($this, 'show_inner_field_edit'), 10, 2 );
+		add_action( "adv_term_fields_show_inner_field_qedit_{$this->meta_key}", array($this, 'show_inner_field_qedit'), 10, 3 );
 	}
 
 
 	/**
-	 * Displays form field on Add Term form
+	 * Displays wrapper for form fields on Add Term form
 	 *
 	 * @see Advanced_Term_Fields::show_custom_fields()
 	 *
-	 * @uses Advanced_Term_Fields::$basename
-	 * @uses Advanced_Term_Fields::$meta_key
-	 * @uses Advanced_Term_Fields::$file
-	 * @uses WordPress wp_nonce_field() To build nonce for form field.
+	 * @uses Advanced_Term_Fields::$basename For nonce generation.
+	 * @uses Advanced_Term_Fields::$meta_key For nonce generation.
+	 * @uses Advanced_Term_Fields::$file     To include view.
+	 * @uses WordPress wp_nonce_field()      To build nonce for form field.
 	 *
 	 * @access public
 	 *
@@ -696,7 +723,7 @@ abstract class Advanced_Term_Fields {
 	 */
 	public function add_form_field( $taxonomy )
 	{
-		ob_start();		
+		ob_start();
 		include dirname( $this->file ) . '/views/add-form-field.php';
 		$field = ob_get_contents();
 		ob_end_clean();
@@ -706,14 +733,35 @@ abstract class Advanced_Term_Fields {
 
 
 	/**
-	 * Displays form field on Edit Term form
+	 * Displays inner form field on Add Term form
+	 *
+	 * Called by inheriting classes on init() to display form fields inside form field wrappers.
+	 *
+	 * @see Advanced_Term_Fields::show_custom_fields()
+	 * @see Advanced_Term_Fields::add_form_field()
+	 *
+	 * @uses Advanced_Term_Fields::$file To include view.
+	 *
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param string $taxonomy Current taxonomy slug.
+	 *
+	 * @return void
+	 */
+	public function show_inner_field_add( $taxonomy = '' ){}
+
+
+	/**
+	 * Displays wrapper for form fields on Edit Term form
 	 *
 	 * @see Advanced_Term_Fields::show_custom_fields()
 	 *
-	 * @uses Advanced_Term_Fields::$basename
-	 * @uses Advanced_Term_Fields::$meta_key
-	 * @uses Advanced_Term_Fields::$file
-	 * @uses WordPress wp_nonce_field() To build nonce for form field.
+	 * @uses Advanced_Term_Fields::$basename For nonce generation.
+	 * @uses Advanced_Term_Fields::$meta_key For nonce generation.
+	 * @uses Advanced_Term_Fields::$file     To include view.
+	 * @uses WordPress wp_nonce_field()      To build nonce for form field.
 	 *
 	 * @access public
 	 *
@@ -726,25 +774,47 @@ abstract class Advanced_Term_Fields {
 	 */
 	public function edit_form_field( $term, $taxonomy )
 	{
-		ob_start();		
+		ob_start();
 		include dirname( $this->file ) . '/views/edit-form-field.php';
 		$field = ob_get_contents();
 		ob_end_clean();
 
 		echo $field;
-	}	
+	}
 
 
 	/**
-	 * Displays form field on Quick Edit Term form
+	 * Displays inner form field on Edit Term form
+	 *
+	 * Called by inheriting classes on init() to display form fields inside form field wrappers.
+	 *
+	 * @see Advanced_Term_Fields::show_custom_fields()
+	 * @see Advanced_Term_Fields::edit_form_field()
+	 *
+	 * @uses Advanced_Term_Fields::$file To include view.
+	 *
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param object $term Term object.
+	 * @param string $taxonomy Current taxonomy slug.
+	 *
+	 * @return void
+	 */
+	public function show_inner_field_edit( $term = false, $taxonomy = '' ){}
+
+
+	/**
+	 * Displays wrapper for form fields on Quick Edit Term form
 	 *
 	 * @see Advanced_Term_Fields::show_custom_fields()
 	 *
 	 * @uses Advanced_Term_Fields::$custom_column_name
-	 * @uses Advanced_Term_Fields::$basename
-	 * @uses Advanced_Term_Fields::$meta_key
-	 * @uses Advanced_Term_Fields::$file
-	 * @uses WordPress wp_nonce_field() To build nonce for form field.
+	 * @uses Advanced_Term_Fields::$basename For nonce generation.
+	 * @uses Advanced_Term_Fields::$meta_key For nonce generation.
+	 * @uses Advanced_Term_Fields::$file     To include view.
+	 * @uses WordPress wp_nonce_field()      To build nonce for form field.
 	 *
 	 * @access public
 	 *
@@ -752,16 +822,46 @@ abstract class Advanced_Term_Fields {
 	 *
 	 * @param string $column_name Name of the column to edit.
 	 * @param string $screen	  The screen name.
-	 * @param string $taxonomy	Current taxonomy slug.
+	 * @param string $taxonomy	  Current taxonomy slug.
 	 *
-	 * @return null
+	 * @return void
 	 */
 	public function quick_edit_form_field( $column_name, $screen, $taxonomy )
 	{
 		if( $this->custom_column_name !== $column_name ) {
 			return;
 		}
+
+		ob_start();
+		include dirname( $this->file ) . '/views/quick-form-field.php';
+		$field = ob_get_contents();
+		ob_end_clean();
+
+		echo $field;
 	}
+
+
+	/**
+	 * Displays inner form field on Quick Edit Term form
+	 *
+	 * Called by inheriting classes on init() to display form fields inside form field wrappers.
+	 *
+	 * @see Advanced_Term_Fields::show_custom_fields()
+	 * @see Advanced_Term_Fields::quick_edit_form_field()
+	 *
+	 * @uses Advanced_Term_Fields::$file To include view.
+	 *
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param string $column_name Name of the column to edit.
+	 * @param string $screen	  The screen name.
+	 * @param string $taxonomy	  Current taxonomy slug.
+	 *
+	 * @return void
+	 */
+	public function show_inner_field_qedit( $column_name = '' , $screen = '' , $taxonomy = '' ){}
 
 
 	/**
@@ -961,7 +1061,7 @@ abstract class Advanced_Term_Fields {
 	 *
 	 * @since 0.1.0
 	 *
-	 * @param int	$term_id  Term ID.
+	 * @param int	 $term_id  Term ID.
 	 * @param string $taxonomy The taxonomy for the term.
 	 *
 	 * @return void|null If nonce isn't set.
@@ -993,8 +1093,8 @@ abstract class Advanced_Term_Fields {
 	 *
 	 * @since 0.1.0
 	 *
-	 * @param int	$term_id	 Term ID.
-	 * @param string $taxonomy	The taxonomy for the term.
+	 * @param int	 $term_id	  Term ID.
+	 * @param string $taxonomy	  The taxonomy for the term.
 	 * @param mixed  $meta_value  The value to be updated.
 	 * @param bool   $clean_cache Whether to clean the term cache.
 	 *
@@ -1039,9 +1139,9 @@ abstract class Advanced_Term_Fields {
 	 *
 	 * @since 0.1.0
 	 *
-	 * @param array $pieces	 Terms query SQL clauses.
+	 * @param array $pieces	    Terms query SQL clauses.
 	 * @param array $taxonomies An array of taxonomies.
-	 * @param array $args	   An array of terms query arguments.
+	 * @param array $args	    An array of terms query arguments.
 	 *
 	 * @return array $pieces The filtered SQL clauses
 	 */
@@ -1108,7 +1208,7 @@ abstract class Advanced_Term_Fields {
 	 *
 	 * @since 0.1.0
 	 *
-	 * @param array  $args	   An array of terms query arguments.
+	 * @param array  $args	     An array of terms query arguments.
 	 * @param array  $taxonomies An array of taxonomies.
 	 *
 	 * @return array $args The filtered terms query arguments.

@@ -11,7 +11,6 @@
  *
  */
 ?>
-
 <?php
 $meta_value = $this->get_meta( $term->term_id );
 $icon = sprintf(

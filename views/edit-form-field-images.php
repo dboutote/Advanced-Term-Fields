@@ -11,9 +11,8 @@
  *
  */
 ?>
-
-<?php 
-$thumbnail_id = $this->get_meta( $term->term_id );  
+<?php
+$thumbnail_id = $this->get_meta( $term->term_id );
 $btn_class = ( '' !== $thumbnail_id ) ? '' : 'button ';
 ?>
 
@@ -29,7 +28,7 @@ $btn_class = ( '' !== $thumbnail_id ) ? '' : 'button ';
 
 			if( $image_attributes ) {
 
-				$output = sprintf(
+				$image = sprintf(
 					'<img data-%1$s="%2$s" data-id="%2$s" class="term-%1$s" src="%3$s" width="%4$s" height="%5$s" />',
 					$this->data_type,
 					esc_attr( $thumbnail_id ),
@@ -38,14 +37,14 @@ $btn_class = ( '' !== $thumbnail_id ) ? '' : 'button ';
 					esc_attr ($image_attributes[2] )
 				);
 
-				echo $output;
+				echo $image;
 
 			}; ?>
 
 		<?php else : ?>
-		
+
 			<?php _e( 'Set Featured Image', 'adv-term-fields' ); ?>
-			
+
 		<?php endif; ?>
 
 	</a>

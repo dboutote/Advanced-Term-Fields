@@ -28,7 +28,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 0.1.0
  *
  */
-final class Adv_Term_Fields_Images extends Advanced_Term_Fields {
+final class Adv_Term_Fields_Images extends Advanced_Term_Fields
+{
 
 
 	/**
@@ -197,6 +198,8 @@ final class Adv_Term_Fields_Images extends Advanced_Term_Fields {
 	 * @since 0.1.0
 	 *
 	 * @param string $meta_value The stored meta value to be displayed.
+	 *
+	 * @return string $output The displayed meta value.
 	 */
 	public function custom_column_output( $meta_value )
 	{
@@ -220,13 +223,14 @@ final class Adv_Term_Fields_Images extends Advanced_Term_Fields {
 	}
 
 
-
 	/**
-	 * Displays form field on Add Term form
+	 * Displays inner form field on Add Term form
 	 *
 	 * @see Advanced_Term_Fields::show_custom_fields()
+	 * @see Advanced_Term_Fields::add_form_field()
 	 *
-	 * @uses Advanced_Term_Fields::$file
+	 * @uses Advanced_Term_Fields::$file To include view.
+	 * @uses Advanced_Term_Fields::$meta_key To populate field attributes.
 	 *
 	 * @access public
 	 *
@@ -247,13 +251,15 @@ final class Adv_Term_Fields_Images extends Advanced_Term_Fields {
 	}
 
 
-
 	/**
-	 * Displays form field on Edit Term form
+	 * Displays inner form field on Edit Term form
 	 *
 	 * @see Advanced_Term_Fields::show_custom_fields()
+	 * @see Advanced_Term_Fields::edit_form_field()
 	 *
-	 * @uses Advanced_Term_Fields::$file
+	 * @uses Advanced_Term_Fields::$file To include view.
+	 * @uses Advanced_Term_Fields::$meta_key To populate field attributes.
+	 * @uses Advanced_Term_Fields::get_meta() To retrieve meta value.
 	 *
 	 * @access public
 	 *
@@ -275,17 +281,14 @@ final class Adv_Term_Fields_Images extends Advanced_Term_Fields {
 	}
 
 
-
 	/**
-	 * Displays form field on Quick Edit Term form
+	 * Displays inner form field on Quick Edit Term form
 	 *
 	 * @see Advanced_Term_Fields::show_custom_fields()
+	 * @see Advanced_Term_Fields::quick_edit_form_field()
 	 *
-	 * @uses Advanced_Term_Fields::$custom_column_name
-	 * @uses Advanced_Term_Fields::$basename
-	 * @uses Advanced_Term_Fields::$meta_key
-	 * @uses Advanced_Term_Fields::$file
-	 * @uses WordPress wp_nonce_field() To build nonce for form field.
+	 * @uses Advanced_Term_Fields::$file To include view.
+	 * @uses Advanced_Term_Fields::$meta_key To populate field attributes.
 	 *
 	 * @access public
 	 *
@@ -293,18 +296,13 @@ final class Adv_Term_Fields_Images extends Advanced_Term_Fields {
 	 *
 	 * @param string $column_name Name of the column to edit.
 	 * @param string $screen	  The screen name.
-	 * @param string $taxonomy	Current taxonomy slug.
+	 * @param string $taxonomy	  Current taxonomy slug.
 	 *
-	 * @return null
+	 * @return void
 	 */
-	public function quick_edit_form_field( $column_name = '' , $screen = '' , $taxonomy = '' )
+	public function show_inner_field_qedit( $column_name = '' , $screen = '' , $taxonomy = '' )
 	{
-		if( $this->custom_column_name !== $column_name ) {
-			return;
-		}
-
 		ob_start();
-		wp_nonce_field( $this->basename , "{$this->meta_key}_nonce");
 		include dirname( $this->file ) . '/views/quick-form-field-images.php';
 		$field = ob_get_contents();
 		ob_end_clean();

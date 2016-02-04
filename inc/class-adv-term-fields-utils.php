@@ -27,7 +27,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 0.1.0
  */
-class Adv_Term_Fields_Utils {
+class Adv_Term_Fields_Utils 
+{
 
 
 	/**
@@ -86,7 +87,7 @@ class Adv_Term_Fields_Utils {
 	 *
 	 * @uses Adv_Term_Fields_Utils::$plugin_name
 	 * @uses Adv_Term_Fields_Utils::$required_version
-	 * 
+	 *
 	 * @since 0.1.0
 	 *
 	 * @return void
@@ -113,7 +114,7 @@ class Adv_Term_Fields_Utils {
 	 *
 	 * @since 0.1.0
 	 *
-	 * @return bool True if current version of WP is greater than or equal to required version, 
+	 * @return bool True if current version of WP is greater than or equal to required version,
 	 *              false if not.
 	 */
 	private static function compatible_version()

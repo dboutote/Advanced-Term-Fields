@@ -285,7 +285,7 @@
 						} ),
 					list = popup.find( '.dashicon-picker-list' );
 
-				for ( var i = 0; i < icons.length; i++){			
+				for ( var i = 0; i < icons.length; i++){
 					list.append( '<li data-icon="' + icons[i] + '"><a href="#" title="' + icons[i] + '"><span class="dashicons dashicons-' + icons[i] + '"></span></a></li>' );
 				}
 

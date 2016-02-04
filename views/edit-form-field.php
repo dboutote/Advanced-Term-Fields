@@ -1,7 +1,7 @@
 <?php
 /**
  * Edit form view
- * 
+ *
  * Displays the form field for editing terms.
  *
  * @package Advanced_Term_Fields
@@ -11,7 +11,6 @@
  *
  */
 ?>
-
 <tr class="form-field term-<?php echo esc_attr( $this->meta_key ); ?>-wrap">
 
 	<th scope="row">
@@ -21,12 +20,12 @@
 	</th>
 
 	<td>
-	
+
 		<div id="term-<?php echo esc_attr( $this->meta_key ); ?>-div">
-		
+
 			<?php wp_nonce_field( $this->basename, "{$this->meta_key}_nonce"); ?>
-			
-			<?php do_action("adv_term_fields_edit_form_field_{$this->meta_key}", $term, $taxonomy ); ?>
+
+			<?php do_action("adv_term_fields_show_inner_field_edit_{$this->meta_key}", $term, $taxonomy ); ?>
 
 			<?php if ( ! empty( $this->labels['description'] ) ) : ?>
 				<p class="description"><?php esc_html_e( $this->labels['description'] ); ?></p>

@@ -16,10 +16,10 @@
 	<label for="<?php echo esc_attr( $this->meta_key ); ?>">
 		<?php esc_html_e( $this->labels['singular'] ); ?>
 	</label>
-	
+
 	<?php wp_nonce_field( $this->basename, "{$this->meta_key}_nonce"); ?>
 
-	<?php do_action("adv_term_fields_add_form_field_{$this->meta_key}"); ?>
+	<?php do_action( "adv_term_fields_show_inner_field_add_{$this->meta_key}", $taxonomy ); ?>
 
 	<?php if ( ! empty( $this->labels['description'] ) ) : ?>
 		<p class="description"><?php esc_html_e( $this->labels['description'] ); ?></p>

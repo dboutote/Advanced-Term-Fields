@@ -171,7 +171,7 @@
 
             // wrap the image in the set link
             sl.removeClass('button').html(img_html).after(dl);
-            
+
         } else {
             reset_set_link(sl_parent);
             clear_delete_link(sl_parent);
