@@ -2,16 +2,17 @@
 /**
  * Quick-edit form view
  *
- * Displays the form field for quick-editing terms.
+ * Displays the wrapper for the form field for adding terms.
+ *
+ * @uses 'do_action' "adv_term_fields_show_inner_field_qedit_{$this->meta_key}" filter for 
+ * inheriting classes to output fields.
  *
  * @package Advanced_Term_Fields
  * @subpackage Views
  *
  * @since 0.1.0
- *
  */
-?>
-<?php
+
 if ( ( $this->custom_column_name !== $column_name ) || ( 'edit-tags' !== $screen ) || ! in_array( $taxonomy, $this->allowed_taxonomies ) ) {
 	return false;
 };

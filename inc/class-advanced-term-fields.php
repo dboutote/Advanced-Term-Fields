@@ -600,7 +600,7 @@ abstract class Advanced_Term_Fields
 	 *
 	 * @see Advanced_Term_Fields::add_column_value()
 	 *
-	 * @access protected
+	 * @access public
 	 *
 	 * @since 0.1.0
 	 *
@@ -724,7 +724,7 @@ abstract class Advanced_Term_Fields
 	public function add_form_field( $taxonomy )
 	{
 		ob_start();
-		include dirname( $this->file ) . '/views/add-form-field.php';
+		include dirname( ADV_TERM_FIELDS_FILE ) . '/views/add-form-field.php';
 		$field = ob_get_contents();
 		ob_end_clean();
 
@@ -775,7 +775,7 @@ abstract class Advanced_Term_Fields
 	public function edit_form_field( $term, $taxonomy )
 	{
 		ob_start();
-		include dirname( $this->file ) . '/views/edit-form-field.php';
+		include dirname( ADV_TERM_FIELDS_FILE ) . '/views/edit-form-field.php';
 		$field = ob_get_contents();
 		ob_end_clean();
 
@@ -833,7 +833,7 @@ abstract class Advanced_Term_Fields
 		}
 
 		ob_start();
-		include dirname( $this->file ) . '/views/quick-form-field.php';
+		include dirname( ADV_TERM_FIELDS_FILE ) . '/views/quick-form-field.php';
 		$field = ob_get_contents();
 		ob_end_clean();
 

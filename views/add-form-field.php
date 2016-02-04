@@ -2,13 +2,15 @@
 /**
  * Add form view
  *
- * Displays the form field for adding terms.
+ * Displays the wrapper for the form field for adding terms.
+ *
+ * @uses 'do_action' "adv_term_fields_show_inner_field_add_{$this->meta_key}" filter for 
+ * inheriting classes to output fields.
  *
  * @package Advanced_Term_Fields
  * @subpackage Views
  *
  * @since 0.1.0
- *
  */
 ?>
 <div class="form-field term-<?php echo esc_attr( $this->meta_key ); ?>-wrap" id="term-<?php echo esc_attr( $this->meta_key ); ?>-div">

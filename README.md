@@ -1,13 +1,11 @@
 # Advanced Term Fields
 
-Custom meta fields for all your taxonomy terms.
+Advanced Term Fields is custom meta fields for terms, built the WordPress way.
 
 Easily add/manage custom meta fields for categories, tags, and custom taxonomies.
 
 Advanced Term Fields gives developers an easy-to-use, yet powerful framework for adding custom meta fields to taxonomy terms.
 Use it for tags, categories, and custom taxonomies.
-
-Comes bundled with two meta fields; "Featured Images for Terms" and "Term Icons".
 
 # Installation
 
@@ -26,10 +24,29 @@ Comes bundled with two meta fields; "Featured Images for Terms" and "Term Icons"
 
 # Usage
 
----
+This is a parent framework, meant to be extended by child classes.  See any one of the following 
+for examples:
+
+* 
+* 
+* 
 
 # Frequently Asked Questions
 
 ### Where can I find additional additional documentation?
 
 The plugin's official page: http://darrinb.com/plugins/advanced-term-fields
+
+### Does this plugin depend on any others?
+
+Nope.
+
+### Does this create/modify/destroy database tables?
+
+Nope.  This leverages the term meta capabilities added in WordPress 4.4.  No database modifications needed!
+
+
+# Changelog
+
+### 0.1.0
+* Initial release

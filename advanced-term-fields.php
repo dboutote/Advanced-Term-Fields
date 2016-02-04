@@ -7,7 +7,6 @@
  * @license     http://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
  * @version     0.1.0
  *
- * @wordpress-plugin
  * Plugin Name: Advanced Term Fields
  * Plugin URI:  http://darrinb.com/plugins/advanced-term-fields
  * Description: Easily add/manage custom meta fields for categories, tags, and custom taxonomies.
@@ -54,29 +53,3 @@ add_action( 'plugins_loaded', array( 'Adv_Term_Fields_Utils', 'compatibility_che
  * @since 0.1.0
  */
 include dirname( __FILE__ ) . '/inc/class-advanced-term-fields.php';
-
-
-/**
- * Instantiates the main Term Icons Class
- *
- * @since 0.1.0
- */
-function _adv_term_fields_init_icons(){
-	include dirname( __FILE__ ) . '/inc/class-adv-term-fields-icons.php';
-	$Adv_Term_Fields_Icons = new Adv_Term_Fields_Icons( __FILE__ );
-	$Adv_Term_Fields_Icons->init();
-}
-add_action( 'init', '_adv_term_fields_init_icons', 99 );
-
-
-/**
- * Instantiates the main Term Images Class
- *
- * @since 0.1.0
- */
-function _adv_term_fields_init_images(){
-	include dirname( __FILE__ ) . '/inc/class-adv-term-fields-images.php';
-	$Adv_Term_Fields_Images = new Adv_Term_Fields_Images( __FILE__ );
-	$Adv_Term_Fields_Images->init();
-}
-add_action( 'init', '_adv_term_fields_init_images', 99 );
