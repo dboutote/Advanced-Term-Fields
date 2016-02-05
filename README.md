@@ -8,6 +8,8 @@ Through the use of hooks and filters, it's completely customizable for your proj
 
 Use it for tags, categories, even custom taxonomies!
 
+![term admin](assets/screenshot.png?raw=true "Term Meta!")
+
 # Installation
 
 ### From the WordPress.org plugin repository:
