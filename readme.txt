@@ -19,7 +19,7 @@ Use it for tags, categories, even custom taxonomies!
 
 = Usage =
 
-This is a parent framework, meant to be extended by child classes.  See any one of the following for examples:
+This is a parent framework, meant to be extended by child classes.  See any one of the following extensions for examples:
 
 * [Advanced Term Fields: Colors](https://github.com/dboutote/Advanced-Term-Fields-Colors) Assign colors for categories, tags, and custom taxonomy terms.
 * [Advanced Term Fields: Icons](https://github.com/dboutote/Advanced-Term-Fields-Icons) Assign dashicon icons for categories, tags, and custom taxonomy terms.
@@ -55,6 +55,13 @@ Nope!
 = Does this create/modify/destroy database tables? =
 
 This leverages the term meta capabilities added in WordPress 4.4.  No database modifications needed!
+
+== Screenshots ==
+
+1. Accessible from the Quick Edit form
+2. Shown with color picker extension.
+3. Shown with icons extension.
+4. Shown with featured image extension.
 
 
 == Changelog ==

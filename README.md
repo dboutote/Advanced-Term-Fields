@@ -27,7 +27,7 @@ Use it for tags, categories, even custom taxonomies!
 
 # Usage
 
-This is a parent framework, meant to be extended by child classes.  See any one of the following for examples:
+This is a parent framework, meant to be extended by child classes.  See any one of the following extensions for examples:
 
 * [Advanced Term Fields: Colors](https://github.com/dboutote/Advanced-Term-Fields-Colors) Assign colors for categories, tags, and custom taxonomy terms.
 * [Advanced Term Fields: Icons](https://github.com/dboutote/Advanced-Term-Fields-Icons) Assign dashicon icons for categories, tags, and custom taxonomy terms.
