@@ -21,7 +21,9 @@ Use it for tags, categories, even custom taxonomies!
 
 This is a parent framework, meant to be extended by child classes.  See any one of the following for examples:
 
-* [Advanced Term Fields: Colors](https://github.com/dboutote/Advanced-Term-Fields-Colors) Easily assign colors for categories, tags, and custom taxonomy terms.
+* [Advanced Term Fields: Colors](https://github.com/dboutote/Advanced-Term-Fields-Colors) Assign colors for categories, tags, and custom taxonomy terms.
+* [Advanced Term Fields: Icons](https://github.com/dboutote/Advanced-Term-Fields-Icons) Assign dashicon icons for categories, tags, and custom taxonomy terms.
+* [Advanced Term Fields: Featured Images](https://github.com/dboutote/Advanced-Term-Fields-Images) Assign featured images for categories, tags, and custom taxonomy terms.
 
 
 == Installation ==
@@ -44,7 +46,7 @@ This is a parent framework, meant to be extended by child classes.  See any one 
 
 = Where can I find documentation? =
 
-The plugin's official page: http://darrinb.com/plugins/advanced-term-fields
+The plugin's official page: http://darrinb.com/advanced-term-fields
 
 = Does this plugin depend on any others? =
 
