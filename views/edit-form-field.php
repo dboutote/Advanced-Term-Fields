@@ -13,17 +13,17 @@
  * @since 0.1.0
  */
 ?>
-<tr class="form-field term-<?php echo esc_attr( $this->meta_key ); ?>-wrap">
+<tr class="form-field term-<?php echo esc_attr( $this->meta_slug ); ?>-wrap">
 
 	<th scope="row">
-		<label for="<?php echo esc_attr( $this->meta_key ); ?>">
+		<label for="<?php echo esc_attr( $this->meta_slug ); ?>">
 			<?php esc_html_e( $this->labels['singular'] ); ?>
 		</label>
 	</th>
 
 	<td>
 
-		<div id="term-<?php echo esc_attr( $this->meta_key ); ?>-div">
+		<div id="term-<?php echo esc_attr( $this->meta_slug ); ?>-div">
 
 			<?php wp_nonce_field( $this->basename, "{$this->meta_key}_nonce"); ?>
 

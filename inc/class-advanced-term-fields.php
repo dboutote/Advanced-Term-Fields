@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Advanced_Term_Fields Class
  *
- * @version 1.0.0
+ * @version 0.1.0
  *
  * @since 0.1.0
  */
@@ -42,7 +42,7 @@ abstract class Advanced_Term_Fields
 	 *
 	 * @var string
 	 */
-	protected $version = '0.1.0';
+	protected static $version = 'p0.1.0';
 
 
 	/**
@@ -72,6 +72,23 @@ abstract class Advanced_Term_Fields
 
 
 	/**
+	 * Singular slug for meta key
+	 *
+	 * Used for:
+	 * - localizing js files
+	 * - form field views
+	 *
+	 * @see Advanced_Term_Fields::enqueue_admin_scripts()
+	 * @see Advanced_Term_Fields\Views\(add|edit|qedit).php
+	 *
+	 * @since 0.1.0
+	 *
+	 * @var string
+	 */
+	protected $meta_slug = '';
+
+
+	/**
 	 * Default value to display in the terms list table
 	 *
 	 * @since 0.1.0
@@ -93,8 +110,11 @@ abstract class Advanced_Term_Fields
 	protected $custom_column_name = '';
 
 
+
 	/**
-	 * Unique singular slug for meta type
+	 * Unique singular descriptor for meta type
+	 *
+	 * (e.g.) "icon", "color", "thumbnail", "image", "lock".
 	 *
 	 * Used in localizing js files.
 	 *
@@ -222,6 +242,7 @@ abstract class Advanced_Term_Fields
 	 */
 	private $_required_props = array(
 		'meta_key',
+		'meta_slug',
 		'data_type',
 		'labels',
 		);
@@ -240,7 +261,7 @@ abstract class Advanced_Term_Fields
 	 *
 	 * @var string
 	 */
-	protected $meta_type = '';
+	protected $meta_value_type = '';
 
 
 	/**
@@ -282,6 +303,13 @@ abstract class Advanced_Term_Fields
 
 		// check to make sure everything is set
 		$this->_check_required_props();
+		$this->check_update( self::$version );
+	}
+	
+	public function check_update( $v )
+	{
+		_debug( $this->db_version_key );
+		_debug( $v );
 	}
 
 
@@ -417,6 +445,9 @@ abstract class Advanced_Term_Fields
 	/**
 	 * Registers term meta, key, and callbacks
 	 *
+	 * If the meta is protected, the key needs to be prefaced with an underscore before registering.
+	 * This will ensure WP recognizes it as protected.
+	 *
 	 * @see https://codex.wordpress.org/Function_Reference/register_meta
 	 *
 	 * @uses WordPress\Meta register_meta()
@@ -521,7 +552,7 @@ abstract class Advanced_Term_Fields
 		}
 
 		if ( ! empty( $allowed_taxonomies ) ) :
-			foreach ( $allowed_taxonomies as $tax_name ) {
+			foreach ( $allowed_taxonomies as $tax_name ) {	
 				add_filter( "manage_edit-{$tax_name}_columns", array( $this, 'add_column_header' ) );
 				add_filter( "manage_{$tax_name}_custom_column", array( $this, 'add_column_value' ), 10, 3 );
 				add_filter( "manage_edit-{$tax_name}_sortable_columns", array( $this, 'sortable_columns' ) );
@@ -578,6 +609,7 @@ abstract class Advanced_Term_Fields
 	 */
 	public function add_column_value( $empty = '', $column_name = '', $term_id = 0 )
 	{
+
 		if ( empty( $_REQUEST['taxonomy'] ) || ( $this->custom_column_name !== $column_name ) || ! empty( $empty ) ) {
 			return;
 		}
@@ -652,7 +684,7 @@ abstract class Advanced_Term_Fields
 	 *
 	 * @param array $allowed_taxonomies The taxonomies to display the field on.
 	 *
-	 * @return array $allowed_taxonomies The allowed taxonomies.
+	 * @return null
 	 */
 	public function show_custom_fields( $allowed_taxonomies = array() )
 	{
@@ -668,9 +700,7 @@ abstract class Advanced_Term_Fields
 			}
 		endif;
 
-
-
-		return $allowed_taxonomies;
+		return;
 	}
 
 
@@ -708,10 +738,11 @@ abstract class Advanced_Term_Fields
 	 *
 	 * @see Advanced_Term_Fields::show_custom_fields()
 	 *
-	 * @uses Advanced_Term_Fields::$basename For nonce generation.
-	 * @uses Advanced_Term_Fields::$meta_key For nonce generation.
-	 * @uses Advanced_Term_Fields::$file     To include view.
-	 * @uses WordPress wp_nonce_field()      To build nonce for form field.
+	 * @uses Advanced_Term_Fields::$basename  For nonce generation.
+	 * @uses Advanced_Term_Fields::$meta_key  For nonce generation.
+	 * @uses Advanced_Term_Fields::$file      To include view.
+	 * @uses WordPress wp_nonce_field()       To build nonce for form field.
+	 * @uses Advanced_Term_Fields::$meta_slug To populate CSS IDs, classes.
 	 *
 	 * @access public
 	 *
@@ -735,7 +766,8 @@ abstract class Advanced_Term_Fields
 	/**
 	 * Displays inner form field on Add Term form
 	 *
-	 * Called by inheriting classes on init() to display form fields inside form field wrappers.
+	 * Called by inheriting classes on {$ClassName}->init() to display form fields inside form
+	 * field wrappers.
 	 *
 	 * @see Advanced_Term_Fields::show_custom_fields()
 	 * @see Advanced_Term_Fields::add_form_field()
@@ -758,10 +790,11 @@ abstract class Advanced_Term_Fields
 	 *
 	 * @see Advanced_Term_Fields::show_custom_fields()
 	 *
-	 * @uses Advanced_Term_Fields::$basename For nonce generation.
-	 * @uses Advanced_Term_Fields::$meta_key For nonce generation.
-	 * @uses Advanced_Term_Fields::$file     To include view.
-	 * @uses WordPress wp_nonce_field()      To build nonce for form field.
+	 * @uses Advanced_Term_Fields::$basename  For nonce generation.
+	 * @uses Advanced_Term_Fields::$meta_key  For nonce generation.
+	 * @uses Advanced_Term_Fields::$file      To include view.
+	 * @uses WordPress wp_nonce_field()       To build nonce for form field.
+	 * @uses Advanced_Term_Fields::$meta_slug To populate CSS IDs, classes.
 	 *
 	 * @access public
 	 *
@@ -786,7 +819,8 @@ abstract class Advanced_Term_Fields
 	/**
 	 * Displays inner form field on Edit Term form
 	 *
-	 * Called by inheriting classes on init() to display form fields inside form field wrappers.
+	 * Called by inheriting classes on {$ClassName}->init() to display form fields inside form
+	 * field wrappers.
 	 *
 	 * @see Advanced_Term_Fields::show_custom_fields()
 	 * @see Advanced_Term_Fields::edit_form_field()
@@ -811,10 +845,11 @@ abstract class Advanced_Term_Fields
 	 * @see Advanced_Term_Fields::show_custom_fields()
 	 *
 	 * @uses Advanced_Term_Fields::$custom_column_name
-	 * @uses Advanced_Term_Fields::$basename For nonce generation.
-	 * @uses Advanced_Term_Fields::$meta_key For nonce generation.
-	 * @uses Advanced_Term_Fields::$file     To include view.
-	 * @uses WordPress wp_nonce_field()      To build nonce for form field.
+	 * @uses Advanced_Term_Fields::$basename  For nonce generation.
+	 * @uses Advanced_Term_Fields::$meta_key  For nonce generation.
+	 * @uses Advanced_Term_Fields::$file      To include view.
+	 * @uses WordPress wp_nonce_field()       To build nonce for form field.
+	 * @uses Advanced_Term_Fields::$meta_slug To populate CSS IDs, classes.
 	 *
 	 * @access public
 	 *
@@ -844,7 +879,8 @@ abstract class Advanced_Term_Fields
 	/**
 	 * Displays inner form field on Quick Edit Term form
 	 *
-	 * Called by inheriting classes on init() to display form fields inside form field wrappers.
+	 * Called by inheriting classes on {$ClassName}->init() to display form fields inside form
+	 * field wrappers.
 	 *
 	 * @see Advanced_Term_Fields::show_custom_fields()
 	 * @see Advanced_Term_Fields::quick_edit_form_field()
@@ -900,7 +936,6 @@ abstract class Advanced_Term_Fields
 	}
 
 
-
 	/**
 	 * Returns taxonomies used meta key
 	 *
@@ -915,21 +950,21 @@ abstract class Advanced_Term_Fields
 	 */
 	public function get_taxonomies()
 	{
-		$defaults = apply_filters( "advanced_term_fields_get_taxonomies_args", array( 'show_ui' => true ) );
-		$defaults = apply_filters( "advanced_term_fields_{$this->meta_key}_get_taxonomies_args", $defaults );
+		$defaults = apply_filters( "advanced_term_fields_get_taxonomies_args", array( 'show_ui' => true ), $this->meta_key);
+		$defaults = apply_filters( "advanced_term_fields_{$this->meta_key}_get_taxonomies_args", $defaults, $this->meta_key);
 
 		$allowed_taxonomies = get_taxonomies( $defaults );
 
-		return apply_filters('advanced_term_fields_allowed_taxonomies', $allowed_taxonomies);
+		return apply_filters('advanced_term_fields_allowed_taxonomies', $allowed_taxonomies, $this->meta_key);
 	}
 
 
 	/**
 	 * Builds column name for meta field
 	 *
-	 * Note: Relying on $meta_key alone throws an error with 'dashicons-picker' script
+	 * Note: Relying on $meta_key/$meta_slug alone throws an error with 'dashicons-picker' script.
 	 *
-	 * @uses Advanced_Term_Fields::$meta_key
+	 * @uses Advanced_Term_Fields::$meta_slug
 	 *
 	 * @access public
 	 *
@@ -939,7 +974,7 @@ abstract class Advanced_Term_Fields
 	 */
 	public function get_custom_column_name()
 	{
-		return 'col-' . $this->meta_key;
+		return 'col-' . $this->meta_slug;
 	}
 
 
@@ -1081,6 +1116,8 @@ abstract class Advanced_Term_Fields
 	/**
 	 * Updates meta value
 	 *
+	 * Note: If the key is private, an underscore "_" will be appended to the key before storing
+	 *
 	 * @see https://developer.wordpress.org/reference/functions/delete_term_meta/
 	 * @see https://developer.wordpress.org/reference/functions/update_term_meta/
 	 * @see https://developer.wordpress.org/reference/functions/clean_term_cache/
@@ -1112,6 +1149,7 @@ abstract class Advanced_Term_Fields
 			clean_term_cache( $term_id, $taxonomy );
 		}
 	}
+
 
 	/**
 	 * Loads term query methods
@@ -1171,13 +1209,13 @@ abstract class Advanced_Term_Fields
 		 * Someone could set meta_type in get_terms() at a later point if Core adopts meta querying
 		 * for terms like post types.
 		 */
-		$meta_type = (  isset( $args['meta_type'] ) && ! empty( $args['meta_type'] )  ) ? esc_sql( $args['meta_type'] ) : $this->meta_type;
+		$meta_value_type = (  isset( $args['meta_type'] ) && ! empty( $args['meta_type'] )  ) ? esc_sql( $args['meta_type'] ) : $this->meta_value_type;
 
 		switch ( $args[ 'orderby' ] ) {
 			case $this->meta_key :
 			case 'meta_value' :
-				if ( ! empty( $meta_type ) ) {
-					$pieces ['orderby'] = "ORDER BY CAST({$wpdb->termmeta}.meta_value AS {$meta_type})";
+				if ( ! empty( $meta_value_type ) ) {
+					$pieces ['orderby'] = "ORDER BY CAST({$wpdb->termmeta}.meta_value AS {$meta_value_type})";
 				} else {
 					$pieces ['orderby'] = "ORDER BY {$wpdb->termmeta}.meta_value";
 				}
@@ -1189,7 +1227,6 @@ abstract class Advanced_Term_Fields
 
 		return $pieces ;
 	}
-
 
 
 	/**
@@ -1232,11 +1269,11 @@ abstract class Advanced_Term_Fields
 		$args['meta_query'] = array(
 			'relation' => 'OR',
 			array(
-				'key'=>$this->meta_key,
+				'key'     => $this->meta_key,
 				'compare' => 'EXISTS'
 			),
 			array(
-				'key'=>$this->meta_key,
+				'key'     => $this->meta_key,
 				'compare' => 'NOT EXISTS'
 			)
 		);
