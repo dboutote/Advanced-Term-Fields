@@ -42,7 +42,7 @@ abstract class Advanced_Term_Fields
 	 *
 	 * @var string
 	 */
-	protected static $version = 'p0.1.0';
+	protected $version = '0.0.0';
 
 
 	/**
@@ -303,13 +303,6 @@ abstract class Advanced_Term_Fields
 
 		// check to make sure everything is set
 		$this->_check_required_props();
-		$this->check_update( self::$version );
-	}
-	
-	public function check_update( $v )
-	{
-		_debug( $this->db_version_key );
-		_debug( $v );
 	}
 
 
@@ -552,7 +545,7 @@ abstract class Advanced_Term_Fields
 		}
 
 		if ( ! empty( $allowed_taxonomies ) ) :
-			foreach ( $allowed_taxonomies as $tax_name ) {	
+			foreach ( $allowed_taxonomies as $tax_name ) {
 				add_filter( "manage_edit-{$tax_name}_columns", array( $this, 'add_column_header' ) );
 				add_filter( "manage_{$tax_name}_custom_column", array( $this, 'add_column_value' ), 10, 3 );
 				add_filter( "manage_edit-{$tax_name}_sortable_columns", array( $this, 'sortable_columns' ) );
@@ -932,7 +925,7 @@ abstract class Advanced_Term_Fields
 	 */
 	public function get_db_version_key()
 	{
-		return "advanced_term_meta_fields_{$this->meta_key}_version";
+		return "atf_{$this->meta_key}_version";
 	}
 
 
@@ -981,7 +974,6 @@ abstract class Advanced_Term_Fields
 	/**
 	 * Loads various admin functions
 	 *
-	 * - Checks for version update.
 	 * - Loads js/css scripts
 	 *
 	 * @access public
@@ -992,31 +984,7 @@ abstract class Advanced_Term_Fields
 	 */
 	public function load_admin_functions()
 	{
-		add_action( 'admin_init', array( $this, 'upgrade_check' ) );
 		add_action( 'load-edit-tags.php', array( $this, 'load_admin_scripts'  ) );
-	}
-
-
-	/**
-	 * Loads various admin functions
-	 *
-	 * @uses Advanced_Term_Fields::$db_version_key
-	 * @uses version_compare()
-	 * @uses WordPress update_option()
-	 *
-	 * @access public
-	 *
-	 * @since 0.1.0
-	 *
-	 * @return void
-	 */
-	public function upgrade_check()
-	{
-		$stored_version = get_option( $this->db_version_key );
-
-		if ( version_compare( $stored_version, $this->version, '<' ) ) {
-			update_option( $this->db_version_key, $this->version );
-		}
 	}
 
 

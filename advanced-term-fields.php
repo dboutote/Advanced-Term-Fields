@@ -32,6 +32,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
+/**
+ * @internal Nobody should be able to overrule the real version number as this can cause serious 
+ * issues, so no if ( ! defined() )
+ *
+ * @since 0.1.1
+ */
+define( 'ADV_TERM_FIELDS_VERSION', '0.1.6' );
+
 
 if ( ! defined( 'ADV_TERM_FIELDS_FILE' ) ) {
 	define( 'ADV_TERM_FIELDS_FILE', __FILE__ );
@@ -39,12 +47,28 @@ if ( ! defined( 'ADV_TERM_FIELDS_FILE' ) ) {
 
 
 /**
- * Check if we can load/activate
+ * Load Utilities
  *
  * @since 0.1.0
  */
 include dirname( __FILE__ ) . '/inc/class-adv-term-fields-utils.php';
+include dirname( __FILE__ ) . '/inc/functions.php';
+
+/**
+ * Check if we can load/activate
+ *
+ * @since 0.1.0
+ */
 add_action( 'plugins_loaded', array( 'Adv_Term_Fields_Utils', 'compatibility_check' ) );
+
+/**
+ * Check if we need to upgrade
+ *
+ * @since 0.1.0
+ */
+add_action( 'init', array( 'Adv_Term_Fields_Utils', 'check_for_update' ) );
+
+
 
 
 /**

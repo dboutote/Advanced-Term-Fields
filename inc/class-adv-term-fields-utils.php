@@ -23,14 +23,23 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Group of utility methods for use by Advanced_Term_Fields
  *
- * @version 1.0.0
+ * @version 0.1.0
  *
  * @since 0.1.0
  */
 class Adv_Term_Fields_Utils 
 {
 
-
+	/**
+	 * Name of plugin
+	 *
+	 * @since 0.1.1
+	 *
+	 * @var string
+	 */
+	public static $plugin_version = ADV_TERM_FIELDS_VERSION;
+	
+	
 	/**
 	 * Name of plugin
 	 *
@@ -60,7 +69,7 @@ class Adv_Term_Fields_Utils
 	 *
 	 * @return void
 	 */
-	static function compatibility_check()
+	public static function compatibility_check()
 	{
 		if ( ! self::compatible_version() ) {
 			add_action( 'admin_init', array(__CLASS__, 'plugin_deactivate') );
@@ -125,5 +134,75 @@ class Adv_Term_Fields_Utils
 
 		return false;
 	}
+	
+	
+	/**
+	 * Returns the database key for the plugin version
+	 *
+	 * @uses Advanced_Term_Fields::$meta_key
+	 *
+	 * @access public
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return string Version key.
+	 */
+	public static function get_db_version_key( $meta_key )
+	{
+		return "atf_{$meta_key}_version";
+	}	
+	
+	
+	/**
+	 * Loads upgrade check
+	 *
+	 * @uses Adv_Term_Fields_Utils::get_db_version_key()
+	 * @uses WordPress get_option()
+	 * @uses Adv_Term_Fields_Utils::upgrade_version()
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return void
+	 */
+	public static function check_for_update()
+	{
+		$db_version_key = self::get_db_version_key( 'core' );	
+		$db_version = get_option( $db_version_key );
+		
+		do_action( 'atf_pre_core_upgrade_check', $db_version_key, $db_version );		
+		
+		if( ! $db_version || version_compare( $db_version, self::$plugin_version, '<' ) ) {
+			self::upgrade_version( $db_version_key, self::$plugin_version, $db_version );		
+		}
+	}
+	
+	
+	/**
+	 * Upgrades database record of plugin version
+	 *
+	 * @uses WordPress update_option()
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param string $db_version_key The database key for the plugin version.
+	 * @param string $plugin_version The most recent plugin version.
+	 * @param string $db_version The plugin version stored in the database pre upgrade.
+	 *
+	 * @return bool $updated True if version has changed, false if not or if update failed.
+	 */
+	public static function upgrade_version( $db_version_key, $plugin_version, $db_version = 0 )
+	{
+		do_action( "atf_pre_{$db_version_key}_version_upgrade", $plugin_version, $db_version, $db_version_key );
+		
+		$updated = update_option( $db_version_key, $plugin_version );
+		
+		do_action( "atf_{$db_version_key}_version_upgraded", $updated, $plugin_version, $db_version, $db_version_key );
+		
+		return $updated;
+	}
+	
+	
+	
+	
 
 }
