@@ -28,7 +28,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Advanced_Term_Fields Class
  *
- * @version 0.1.0
+ * @version 0.1.1 Added @var $meta_slug for HTML/CSS classes.
+ * @version 0.1.0 
  *
  * @since 0.1.0
  */
@@ -81,7 +82,7 @@ abstract class Advanced_Term_Fields
 	 * @see Advanced_Term_Fields::enqueue_admin_scripts()
 	 * @see Advanced_Term_Fields\Views\(add|edit|qedit).php
 	 *
-	 * @since 0.1.0
+	 * @since 0.1.1
 	 *
 	 * @var string
 	 */

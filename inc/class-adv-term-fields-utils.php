@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 0.1.0
  */
-class Adv_Term_Fields_Utils 
+class Adv_Term_Fields_Utils
 {
 
 	/**
@@ -38,8 +38,8 @@ class Adv_Term_Fields_Utils
 	 * @var string
 	 */
 	public static $plugin_version = ADV_TERM_FIELDS_VERSION;
-	
-	
+
+
 	/**
 	 * Name of plugin
 	 *
@@ -116,6 +116,7 @@ class Adv_Term_Fields_Utils
 		}
 	}
 
+
 	/**
 	 * Checks for compatibility with current version of WordPress
 	 *
@@ -134,8 +135,8 @@ class Adv_Term_Fields_Utils
 
 		return false;
 	}
-	
-	
+
+
 	/**
 	 * Returns the database key for the plugin version
 	 *
@@ -145,14 +146,16 @@ class Adv_Term_Fields_Utils
 	 *
 	 * @since 0.1.0
 	 *
+	 * @param string $meta_key The meta field key.
+	 *
 	 * @return string Version key.
 	 */
-	public static function get_db_version_key( $meta_key )
+	public static function get_db_version_key( $meta_key = '' )
 	{
 		return "atf_{$meta_key}_version";
-	}	
-	
-	
+	}
+
+
 	/**
 	 * Loads upgrade check
 	 *
@@ -166,17 +169,18 @@ class Adv_Term_Fields_Utils
 	 */
 	public static function check_for_update()
 	{
-		$db_version_key = self::get_db_version_key( 'core' );	
+		$meta_key = 'core';
+		$db_version_key = self::get_db_version_key( $meta_key );
 		$db_version = get_option( $db_version_key );
-		
-		do_action( 'atf_pre_core_upgrade_check', $db_version_key, $db_version );		
-		
+
+		do_action( "atf_pre_{$meta_key}_upgrade_check", $db_version_key, $db_version );
+
 		if( ! $db_version || version_compare( $db_version, self::$plugin_version, '<' ) ) {
-			self::upgrade_version( $db_version_key, self::$plugin_version, $db_version );		
+			self::upgrade_version( $db_version_key, self::$plugin_version, $db_version, $meta_key );
 		}
 	}
-	
-	
+
+
 	/**
 	 * Upgrades database record of plugin version
 	 *
@@ -186,23 +190,24 @@ class Adv_Term_Fields_Utils
 	 *
 	 * @param string $db_version_key The database key for the plugin version.
 	 * @param string $plugin_version The most recent plugin version.
-	 * @param string $db_version The plugin version stored in the database pre upgrade.
+	 * @param string $db_version     The plugin version stored in the database pre upgrade.
+	 * @param string $meta_key       The meta field key.
 	 *
 	 * @return bool $updated True if version has changed, false if not or if update failed.
 	 */
-	public static function upgrade_version( $db_version_key, $plugin_version, $db_version = 0 )
+	public static function upgrade_version( $db_version_key, $plugin_version, $db_version = 0, $meta_key = '' )
 	{
-		do_action( "atf_pre_{$db_version_key}_version_upgrade", $plugin_version, $db_version, $db_version_key );
-		
+		do_action( "atf_pre_{$meta_key}_version_upgrade", $plugin_version, $db_version, $db_version_key );
+
 		$updated = update_option( $db_version_key, $plugin_version );
-		
-		do_action( "atf_{$db_version_key}_version_upgraded", $updated, $plugin_version, $db_version, $db_version_key );
-		
+
+		do_action( "atf_{$meta_key}_version_upgraded", $updated, $db_version_key, $plugin_version, $db_version, $meta_key );
+
 		return $updated;
 	}
-	
-	
-	
-	
+
+
+
+
 
 }
