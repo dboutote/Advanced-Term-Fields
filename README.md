@@ -29,9 +29,9 @@ Use it for tags, categories, even custom taxonomies.  Advanced term meta, your w
 
 This is a parent framework, meant to be extended by child classes.  See any one of the following extensions for examples:
 
-* [Advanced Term Fields: Colors](https://github.com/dboutote/Advanced-Term-Fields-Colors) Assign colors for categories, tags, and custom taxonomy terms.
-* [Advanced Term Fields: Icons](https://github.com/dboutote/Advanced-Term-Fields-Icons) Assign dashicon icons for categories, tags, and custom taxonomy terms.
-* [Advanced Term Fields: Featured Images](https://github.com/dboutote/Advanced-Term-Fields-Images) Assign featured images for categories, tags, and custom taxonomy terms.
+* [Advanced Term Fields: Colors](https://github.com/dboutote/Advanced-Term-Fields-Colors) Color-code your terms!
+* [Advanced Term Fields: Icons](https://github.com/dboutote/Advanced-Term-Fields-Icons) Icons for categories, tags, and custom taxonomy terms.
+* [Advanced Term Fields: Featured Images](https://github.com/dboutote/Advanced-Term-Fields-Images) Featured images for terms!
 
 # FAQ
 
