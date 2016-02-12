@@ -3,27 +3,27 @@ Contributors: dbmartin
 Tags: termmeta, term_meta, term, meta, metadata, taxonomy
 Requires at least: 4.4
 Tested up to: 4.4.1
-Stable tag: 0.1.0
+Stable tag: 0.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-A framework for managing custom meta fields for categories, tags, and custom taxonomies.
+A framework for managing custom term meta for categories, tags, and custom taxonomies.
 
 == Description ==
 
-With the launch of version 4.4, WordPress added metadata capabilities for taxonomy terms.  Advanced Term Fields leverages this new capability by providing developers an easy-to-use, yet powerful framework for adding custom meta fields to taxonomy terms.
+With the launch of version 4.4, WordPress added metadata capabilities for taxonomy terms.  **Advanced Term Fields** leverages this new capability by providing developers an easy-to-use, yet powerful framework for adding custom meta fields to taxonomy terms.
 
 Through the use of hooks and filters, it's completely customizable for your project requirements, while also providing a standardized way of building a UI for managing term metadata.
 
-Use it for tags, categories, even custom taxonomies!
+Use it for tags, categories, even custom taxonomies.  Advanced term meta, your way!
 
 = Usage =
 
 This is a parent framework, meant to be extended by child classes.  See any one of the following extensions for examples:
 
-* [Advanced Term Fields: Colors](https://github.com/dboutote/Advanced-Term-Fields-Colors) Assign colors for categories, tags, and custom taxonomy terms.
-* [Advanced Term Fields: Icons](https://github.com/dboutote/Advanced-Term-Fields-Icons) Assign dashicon icons for categories, tags, and custom taxonomy terms.
-* [Advanced Term Fields: Featured Images](https://github.com/dboutote/Advanced-Term-Fields-Images) Assign featured images for categories, tags, and custom taxonomy terms.
+* [Advanced Term Fields: Colors](https://github.com/dboutote/Advanced-Term-Fields-Colors) Color-code your terms!
+* [Advanced Term Fields: Icons](https://github.com/dboutote/Advanced-Term-Fields-Icons) Icons for categories, tags, and custom taxonomy terms.
+* [Advanced Term Fields: Featured Images](https://github.com/dboutote/Advanced-Term-Fields-Images) Featured images for terms!
 
 
 == Installation ==
@@ -65,6 +65,10 @@ This leverages the term meta capabilities added in WordPress 4.4.  No database m
 
 
 == Changelog ==
+
+= 0.1.1 =
+* Added `$meta_slug` property for localizing js files and HTML attributes for form fields.
+* Added check for update functionaliy to test for latest version.
 
 = 0.1.0 =
 * Initial release

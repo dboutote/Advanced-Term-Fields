@@ -23,6 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Group of utility methods for use by Advanced_Term_Fields
  *
+ * @version 0.1.1 Added check for update.
  * @version 0.1.0
  *
  * @since 0.1.0
