@@ -5,12 +5,12 @@
  * @package Advanced_Term_Fields
  *
  * @license     http://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
- * @version     0.1.0
+ * @version     0.1.1
  *
  * Plugin Name: Advanced Term Fields
  * Plugin URI:  http://darrinb.com/plugins/advanced-term-fields
- * Description: A framework for managing custom meta fields for categories, tags, and custom taxonomies.
- * Version:     0.1.0
+ * Description: A framework for managing custom term meta for categories, tags, and custom taxonomies.
+ * Version:     0.1.1
  * Author:      Darrin Boutote
  * Author URI:  http://darrinb.com
  * Text Domain: adv-term-fields
