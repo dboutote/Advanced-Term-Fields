@@ -3,7 +3,7 @@ Contributors: dbmartin
 Tags: termmeta, term_meta, term, meta, metadata, taxonomy
 Requires at least: 4.4
 Tested up to: 4.4.1
-Stable tag: 0.1.1
+Stable tag: 0.1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,6 +65,10 @@ This leverages the term meta capabilities added in WordPress 4.4.  No database m
 
 
 == Changelog ==
+
+= 0.1.2 =
+* WP 4.5 Compatibility updates: added 'load-term.php' action hook.
+* Bug fix: on quick edit form when $taxonomy is not defined.
 
 = 0.1.1 =
 * Added `$meta_slug` property for localizing js files and HTML attributes for form fields.

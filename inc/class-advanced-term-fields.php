@@ -28,6 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Advanced_Term_Fields Class
  *
+ * @version 0.1.2 WP 4.5 Compatibility updates: added 'load-term.php' action hook
  * @version 0.1.1 Added @var $meta_slug for HTML/CSS classes.
  * @version 0.1.0 
  *
@@ -855,8 +856,13 @@ abstract class Advanced_Term_Fields
 	 *
 	 * @return void
 	 */
-	public function quick_edit_form_field( $column_name, $screen, $taxonomy )
+	public function quick_edit_form_field( $column_name, $screen, $taxonomy = '' )
 	{
+	
+		if( ! $taxonomy ) {
+			return;
+		}
+	
 		if( $this->custom_column_name !== $column_name ) {
 			return;
 		}
@@ -985,6 +991,7 @@ abstract class Advanced_Term_Fields
 	 */
 	public function load_admin_functions()
 	{
+		add_action( 'load-term.php', array( $this, 'load_admin_scripts'  ) );
 		add_action( 'load-edit-tags.php', array( $this, 'load_admin_scripts'  ) );
 	}
 
